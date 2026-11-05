@@ -4,6 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ManassaMai | Let Life Flourish Quiz</title>
+<meta name="description" content="คำถามอบอุ่นที่ชวนคุณกลับมาดูแลตัวเอง และเบ่งบานตามช่วงเวลาของชีวิต | ManassaMai">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ManassaMai">
+<meta property="og:title" content="ManassaMai | Let Life Flourish Quiz">
+<meta property="og:description" content="คำถามอบอุ่นที่ชวนคุณกลับมาดูแลตัวเอง และเบ่งบานตามช่วงเวลาของชีวิต">
+<meta property="og:url" content="https://manassamai.github.io/Quiz3/">
+<meta property="og:image" content="https://manassamai.github.io/Quiz3/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://manassamai.github.io/Quiz3/og.png">
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6efe4;--card:rgba(255,252,246,.78);--ink:#3f3226;--mute:#7a6a58;--accent:#a4573a;--accent2:#ecd5bd;--line:#dccbb3;--glow:rgba(150,110,70,.22);--onacc:#fff;--w1:#e9c9a8;--w2:#cfd8b5;--w3:#ead8b8;--w4:#d8b9a0;
@@ -108,6 +119,18 @@ ul{padding-left:20px;margin:0 0 14px}li{margin-bottom:8px}
 .sep{height:1px;background:var(--line);margin:30px 24px 0;opacity:.8}
 .card.soonc{opacity:.62;border-style:dashed;box-shadow:none;cursor:default}
 .card.soonc:hover{border-color:var(--line)}
+
+.shm{position:fixed;inset:0;z-index:50;background:rgba(30,20,12,.62);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) 14px max(16px,env(safe-area-inset-bottom,0px))}
+.shp{width:100%;max-width:440px;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:28px 24px 30px 26px;padding:18px 16px 16px;margin:auto 0;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.shp h2{font-size:1.2rem;margin:0 0 4px;text-align:center}
+.shp .shimg{display:block;width:100%;max-height:56vh;object-fit:contain;border-radius:18px;border:1px solid var(--line);background:var(--card);margin:10px 0}
+.shp .chips{justify-content:center;margin:8px 0 0}
+.shp .row-btn{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.shp .btn{padding:10px 18px;font-size:.98rem}
+.shp .sl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0}
+.shp .sl a{border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.9rem;color:var(--accent);text-decoration:none;background:var(--card)}
+.shp .sl a:hover{border-color:var(--accent)}
+.shp .mute{text-align:center;margin:6px 0 0}
 </style>
 </head>
 <body>
@@ -731,6 +754,118 @@ function say(t,x){return sayH(t,'<p>'+x+'</p>')}
 function copyTxt(btn,txt){
  try{navigator.clipboard.writeText(txt).then(function(){btn.textContent="คัดลอกแล้ว"},function(){btn.textContent=txt})}catch(e){btn.textContent=txt}
 }
+
+/* ===== Share card ===== */
+function shareUrl(){try{return S&&S.id?setLink(idx):baseUrl()}catch(e){return baseUrl()}}
+function parseShare(txt){
+ var ls=txt.split("\n").map(function(x){return x.replace(/\s*\|\s*ManassaMai\s*$/,"").trim()}).filter(Boolean);
+ var f=ls.shift()||"",k=f.indexOf(": "),o={label:"ผลของฉัน",head:f,lines:ls};
+ if(k>0&&k<44){o.label=f.slice(0,k);o.head=f.slice(k+2)}
+ return o}
+function segTh(t){try{return Array.from(new Intl.Segmenter("th",{granularity:"word"}).segment(t),function(x){return x.segment})}catch(e){return t.split("")}}
+function wrapTh(c,t,w){
+ var out=[],cur="";
+ segTh(t).forEach(function(wd){
+  var test=cur+wd;
+  if(c.measureText(test).width>w&&cur.trim()){out.push(cur.trim());cur=wd.replace(/^\s+/,"")}else cur=test});
+ if(cur.trim())out.push(cur.trim());
+ return out}
+function petal(c,x,y,r,rot,col,a){
+ c.save();c.translate(x,y);c.rotate(rot);c.globalAlpha=a;c.fillStyle=col;
+ for(var i=0;i<5;i++){c.save();c.rotate(i*Math.PI*2/5);c.beginPath();c.ellipse(0,-r*.5,r*.26,r*.5,0,0,Math.PI*2);c.fill();c.restore()}
+ c.globalAlpha=Math.min(1,a+.4);c.fillStyle="#f3d58a";c.beginPath();c.arc(0,0,r*.16,0,Math.PI*2);c.fill();c.restore()}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function drawCard(o,fmt){
+ var W=1080,H=fmt==="feed"?1350:1920,cv=document.createElement("canvas");cv.width=W;cv.height=H;
+ var c=cv.getContext("2d"),TH='"Noto Sans Thai","Leelawadee UI",Tahoma,sans-serif',MA='"Mali","Noto Sans Thai","Leelawadee UI",Tahoma,sans-serif';
+ var ACC="#a4573a",INK="#3f3226",MUTE="#7a6a58",LINE="#dccbb3";
+ c.fillStyle="#f6efe4";c.fillRect(0,0,W,H);
+ [[180,140,"233,201,168"],[W-80,H*.3,"207,216,181"],[120,H*.72,"234,216,184"],[W-160,H-140,"216,185,160"]].forEach(function(b){
+  var g=c.createRadialGradient(b[0],b[1],0,b[0],b[1],W*.75);g.addColorStop(0,"rgba("+b[2]+",.95)");g.addColorStop(1,"rgba("+b[2]+",0)");c.fillStyle=g;c.fillRect(0,0,W,H)});
+ petal(c,90,110,150,.3,"#c98a62",.35);petal(c,W-70,H-120,170,1,"#a9b58a",.4);petal(c,W-60,150,90,.6,"#d8b9a0",.35);petal(c,70,H-170,100,.2,"#e0b98a",.35);
+ var cx=64,cy=fmt==="feed"?64:140,cw=W-128,ch=H-cy*2;
+ c.save();c.shadowColor="rgba(150,110,70,.28)";c.shadowBlur=40;c.shadowOffsetY=12;rrect(c,cx,cy,cw,ch,64);c.fillStyle="rgba(255,252,246,.9)";c.fill();c.restore();
+ rrect(c,cx,cy,cw,ch,64);c.strokeStyle=LINE;c.lineWidth=3;c.stroke();
+ c.textAlign="center";c.textBaseline="alphabetic";
+ var mid=W/2,tx=cx+70,tw=cw-140,top=cy+ (fmt==="feed"?96:120);
+ c.fillStyle=ACC;c.font="700 52px "+MA;c.fillText("ManassaMai",mid,top);
+ c.fillStyle=MUTE;c.font="400 26px "+TH;c.fillText("Self care and Holistic Healing workshop",mid,top+44);
+ var botH=fmt==="feed"?190:230,botY=cy+ch-botH;
+ var bodyTop=top+90,bodyBot=botY-20,avail=bodyBot-bodyTop;
+ var hs=88,hl,lh,lab,bl,bs,total,i;
+ for(;;){
+  c.font="700 "+hs+"px "+MA;hl=wrapTh(c,o.head,tw);
+  if(hl.length>3&&hs>52){hs-=4;continue}
+  lh=Math.round(hs*1.3);
+  c.font="400 30px "+TH;
+  bs=36;
+  for(;;){
+   c.font="400 "+bs+"px "+TH;bl=[];
+   (o.lines||[]).forEach(function(t){bl.push(wrapTh(c,t,tw))});
+   var n=0;bl.forEach(function(a){n+=a.length});
+   total=44+hl.length*lh+36+n*Math.round(bs*1.6)+bl.length*14;
+   if(total<=avail||bs<=26)break;bs-=2}
+  if(total<=avail||hs<=52)break;hs-=4}
+ var y=bodyTop+Math.max(0,(avail-total)/2);
+ c.fillStyle=MUTE;c.font="600 34px "+TH;c.fillText(o.label,mid,y+30);y+=44;
+ c.fillStyle=ACC;c.font="700 "+hs+"px "+MA;
+ hl.forEach(function(t){y+=lh;c.fillText(t,mid,y-Math.round(lh*.22))});
+ y+=14;c.strokeStyle=LINE;c.lineWidth=3;c.beginPath();c.moveTo(mid-90,y);c.lineTo(mid+90,y);c.stroke();y+=22;
+ c.fillStyle=INK;c.font="400 "+bs+"px "+TH;var bh=Math.round(bs*1.6);
+ var maxLines=Math.floor((bodyBot-y)/bh);
+ bl.forEach(function(arr){arr.forEach(function(t){if(maxLines<=0)return;y+=bh;c.fillText(t,mid,y-Math.round(bh*.28));maxLines--});y+=14});
+ var u=(location.host+location.pathname).replace(/index\.html$/,"").replace(/\/$/,"");
+ if(!u||location.protocol==="file:")u="manassamai.github.io/Quiz3";
+ var pw=cw-200,px=mid-pw/2,py=botY+30;
+ rrect(c,px,py,pw,84,42);c.fillStyle=ACC;c.fill();
+ c.fillStyle="#fff";c.font="600 34px "+TH;c.fillText("ลองทำแบบทดสอบของคุณเองได้เลย",mid,py+54);
+ c.fillStyle=MUTE;c.font="400 30px "+TH;c.fillText(u,mid,py+84+52);
+ return cv}
+function shareCard(btn,txt,o){
+ o=o||parseShare(txt);
+ var link=shareUrl(),cap=txt.replace(/\s*\|\s*ManassaMai\s*$/,"")+"\n\nลองทำของคุณเอง 👉 "+link;
+ var fmt="story",cur={blob:null,url:"",file:null},prev=document.activeElement;
+ var m=document.createElement("div");m.className="shm";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");m.setAttribute("aria-label","แชร์ผลลัพธ์");
+ var cn=!!(navigator.share);
+ m.innerHTML='<div class="shp"><h2>แชร์ผลของคุณ</h2><p class="mute">เลือกขนาดรูปให้เหมาะกับที่จะโพสต์</p><div class="chips"><button class="chip on" data-f="story">Story 9:16</button><button class="chip" data-f="feed">Feed 4:5</button></div><img class="shimg" alt="การ์ดผลลัพธ์"><div class="row-btn">'+(cn?'<button class="btn" id="shgo">แชร์</button>':'')+'<button class="btn'+(cn?' ghost':'')+'" id="shsave">บันทึกรูป</button><button class="btn ghost" id="shcp">คัดลอกข้อความ</button></div><div class="sl"><a id="shline" target="_blank" rel="noopener">Line</a><a id="shfb" target="_blank" rel="noopener">Facebook</a><a id="shx" target="_blank" rel="noopener">X</a></div><p class="mute">Instagram: กด "บันทึกรูป" แล้วโพสต์เป็น Story หรือโพสต์ปกติได้เลย</p><div class="row-btn"><button class="btn ghost" id="shx0">ปิด</button></div></div>';
+ document.body.appendChild(m);
+ var img=m.querySelector(".shimg"),eu=encodeURIComponent(link);
+ m.querySelector("#shline").href="https://social-plugins.line.me/lineit/share?url="+eu;
+ m.querySelector("#shfb").href="https://www.facebook.com/sharer/sharer.php?u="+eu;
+ m.querySelector("#shx").href="https://twitter.com/intent/tweet?url="+eu+"&text="+encodeURIComponent(cap.split("\n\n")[0]);
+ function close(){document.removeEventListener("keydown",key);try{URL.revokeObjectURL(cur.url)}catch(e){}m.remove();try{prev&&prev.focus()}catch(e){}}
+ function key(e){if(e.key==="Escape")close()}
+ document.addEventListener("keydown",key);
+ m.addEventListener("click",function(e){if(e.target===m)close()});
+ m.querySelector("#shx0").onclick=close;
+ function build(){
+  var cv=drawCard(o,fmt);
+  cv.toBlob(function(b){
+   if(!b)return;
+   try{URL.revokeObjectURL(cur.url)}catch(e){}
+   cur.blob=b;cur.url=URL.createObjectURL(b);
+   try{cur.file=new File([b],"manassamai-result.png",{type:"image/png"})}catch(e){cur.file=null}
+   img.src=cur.url},"image/png")}
+ function fonts(){
+  var f=document.fonts;
+  if(!f||!f.load)return Promise.resolve();
+  return Promise.all([f.load('700 60px Mali'),f.load('400 30px "Noto Sans Thai"'),f.load('600 30px "Noto Sans Thai"')]).catch(function(){})}
+ var chips=m.querySelectorAll(".chip");
+ for(var q=0;q<chips.length;q++)chips[q].onclick=function(){fmt=this.getAttribute("data-f");for(var z=0;z<chips.length;z++)chips[z].classList.toggle("on",chips[z]===this);build()};
+ var go=m.querySelector("#shgo");
+ if(go)go.onclick=function(){
+  if(!cur.file)return;
+  var d={text:cap};
+  if(navigator.canShare&&navigator.canShare({files:[cur.file]}))d.files=[cur.file];else d.url=link;
+  navigator.share(d).catch(function(){})};
+ m.querySelector("#shsave").onclick=function(){
+  if(!cur.url)return;
+  var a=document.createElement("a");a.href=cur.url;a.download="manassamai-result.png";document.body.appendChild(a);a.click();a.remove()};
+ var cp=m.querySelector("#shcp");
+ cp.onclick=function(){copyTxt(cp,cap)};
+ fonts().then(build);
+ setTimeout(function(){try{m.querySelector(".chip").focus()}catch(e){}},50)}
+
 function contact(){
  var rows=[
   ["Facebook page","ManassaMai Self care & Holistic Healing Workshop","",""],
@@ -784,12 +919,12 @@ function resultBody(){
  if(!pt.length&&ds[lo]!==ds[hi])pt.push("ด้าน "+S.dims[hi][1]+" เป็นจุดที่คุณทำได้ค่อนข้างดีตอนนี้ ส่วนด้าน "+S.dims[lo][1]+" เป็นประเด็นที่น่าลองสำรวจเพิ่มเติม");
  var blk=function(t,x){return '<div class="blk"><div class="blt">'+t+'</div><p>'+x+'</p></div>'};
  var days=S.days.map(function(d,k){return '<details class="day"><summary>Day '+(k+1)+': '+d[0]+'</summary><p><b>วิธีปฏิบัติ</b> '+d[1]+'</p><p><b>คำถามสังเกตตัวเอง</b> '+d[2]+'</p><p><b>นำไปใช้ในชีวิตจริง</b> '+d[3]+'</p></details>'}).join("");
- app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลชุด '+S.title+'</div><h2>'+L.n+'</h2><div class="big" style="font-size:2.4rem">'+tot+'/30</div><p>'+L.r+' · '+L.t+'</p></div>'+bars+(pt.length?blk('ประเด็นที่น่าลองสำรวจเพิ่มเติม',pt.join("<br>")):'')+blk('What this says about you',L.a)+blk('What you may be experiencing',L.b)+blk('Your hidden pattern',L.c)+blk('What your body may need',L.d)+blk('Your next small step',L.e)+'<div class="blk"><div class="blt">Reflection questions</div><ul>'+L.f.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></div>'+say('A gentle reminder',L.g)+'<h2 style="margin-top:24px;font-size:1.2rem">My Body Wisdom Practice: 7 Days of Listening to Yourself</h2><p class="mute">วันละ 3–10 นาที ไม่ต้องใช้อุปกรณ์ และข้ามกิจกรรมที่ทำให้ไม่สบายใจหรือรู้สึกไม่ปลอดภัยได้เสมอ</p>'+days+'<div class="blk"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">เรียนรู้ต่อกับ ManassaMai</div><p>ถ้าอยากต่อยอด สามารถพูดคุยกับ ManassaMai เพื่อปรับสมดุลชีวิตแบบองค์รวมในแบบส่วนตัว (Private Consult) ได้ ไม่จำเป็นต้องเริ่มอะไรเลยก็ได้ แค่ลองฟังตัวเองต่อไปก็ถือว่าเป็นก้าวที่ดีแล้ว</p></div></div></div><div class="row-btn"><button class="btn" id="ct">ช่องทางติดต่อ</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="share">คัดลอกผลไปแชร์</button><button class="btn ghost" id="again">ทำชุดนี้อีกครั้ง</button></div><p class="mute center" style="margin-top:22px">“เราไม่ได้ฝึกฟังร่างกายเพื่อควบคุมร่างกายให้ทำงานได้ดีขึ้นตลอดเวลา แต่เพื่อเรียนรู้ที่จะอยู่ร่วมกับตัวเองอย่างเข้าใจมากขึ้น”</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ผลนี้เป็นเครื่องมือสะท้อนตนเองที่ออกแบบเพื่อการเรียนรู้ ไม่ใช่แบบทดสอบมาตรฐานทางจิตวิทยาหรือการแพทย์ และไม่ใช่การวินิจฉัยโรค หากมีอาการทางกายที่ต่อเนื่อง รุนแรง หรือผิดปกติ ควรปรึกษาผู้เชี่ยวชาญด้านสุขภาพ</p>';
+ app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลชุด '+S.title+'</div><h2>'+L.n+'</h2><div class="big" style="font-size:2.4rem">'+tot+'/30</div><p>'+L.r+' · '+L.t+'</p></div>'+bars+(pt.length?blk('ประเด็นที่น่าลองสำรวจเพิ่มเติม',pt.join("<br>")):'')+blk('What this says about you',L.a)+blk('What you may be experiencing',L.b)+blk('Your hidden pattern',L.c)+blk('What your body may need',L.d)+blk('Your next small step',L.e)+'<div class="blk"><div class="blt">Reflection questions</div><ul>'+L.f.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul></div>'+say('A gentle reminder',L.g)+'<h2 style="margin-top:24px;font-size:1.2rem">My Body Wisdom Practice: 7 Days of Listening to Yourself</h2><p class="mute">วันละ 3–10 นาที ไม่ต้องใช้อุปกรณ์ และข้ามกิจกรรมที่ทำให้ไม่สบายใจหรือรู้สึกไม่ปลอดภัยได้เสมอ</p>'+days+'<div class="blk"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">เรียนรู้ต่อกับ ManassaMai</div><p>ถ้าอยากต่อยอด สามารถพูดคุยกับ ManassaMai เพื่อปรับสมดุลชีวิตแบบองค์รวมในแบบส่วนตัว (Private Consult) ได้ ไม่จำเป็นต้องเริ่มอะไรเลยก็ได้ แค่ลองฟังตัวเองต่อไปก็ถือว่าเป็นก้าวที่ดีแล้ว</p></div></div></div><div class="row-btn"><button class="btn" id="ct">ช่องทางติดต่อ</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="share">แชร์ผลเป็นรูป</button><button class="btn ghost" id="again">ทำชุดนี้อีกครั้ง</button></div><p class="mute center" style="margin-top:22px">“เราไม่ได้ฝึกฟังร่างกายเพื่อควบคุมร่างกายให้ทำงานได้ดีขึ้นตลอดเวลา แต่เพื่อเรียนรู้ที่จะอยู่ร่วมกับตัวเองอย่างเข้าใจมากขึ้น”</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ผลนี้เป็นเครื่องมือสะท้อนตนเองที่ออกแบบเพื่อการเรียนรู้ ไม่ใช่แบบทดสอบมาตรฐานทางจิตวิทยาหรือการแพทย์ และไม่ใช่การวินิจฉัยโรค หากมีอาการทางกายที่ต่อเนื่อง รุนแรง หรือผิดปกติ ควรปรึกษาผู้เชี่ยวชาญด้านสุขภาพ</p>';
  document.getElementById("ct").onclick=function(){idx=SETS.length-1;S=SETS[idx];contact()};
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=bodyIntro;
  var sh=document.getElementById("share");
- sh.onclick=function(){copyTxt(sh,"ผล Body Wisdom Check-In ของฉัน: "+L.n+" ("+tot+"/30) | ManassaMai")};
+ sh.onclick=function(){shareCard(sh,"ผล Body Wisdom Check-In ของฉัน: "+L.n+" ("+tot+"/30) | ManassaMai",{label:"Body Wisdom Check-In",head:L.n+" ("+tot+"/30)",lines:[L.t]})};
  window.scrollTo(0,0);
 }
 
@@ -831,12 +966,12 @@ function resultSeasons(){
   ["ดูแลตัวเองอย่างต่อเนื่อง","Self-care &amp; Body Wisdom","เหมาะกับคนที่เข้าใจตัวเองมากขึ้นแล้ว อยากนำไปใช้จริง ลองพัฒนาวิธีดูแลตัวเองที่เข้ากับชีวิต เช็กอินร่างกาย อารมณ์ และพลังงานสม่ำเสมอ และสร้างกิจวัตรที่ยืดหยุ่นตามจังหวะชีวิต","เกี่ยวกับกิจกรรมหรือโปรแกรม Self-care, Womb Healing และ Body Wisdom ของมะไหมตามความเหมาะสม"]
  ].map(function(p){return '<div class="blk"><div class="blt">'+p[0]+' · '+p[1]+'</div><p>'+p[2]+'</p><p class="mute" style="margin-top:6px">'+p[3]+'</p></div>'}).join("");
  var LINE="https://line.me/R/ti/p/@045nlzmg",IG="https://www.instagram.com/mamai.flowerbliss/";
- app.innerHTML='<div class="sea" style="background:linear-gradient(135deg,'+T.bg+')"><div class="mute">ฤดูของคุณตอนนี้</div><div class="big">'+T.e+'</div><h2>'+T.n+'</h2><p><b>'+T.en+'</b></p><p>'+T.short+'</p>'+(se>=0?'<p class="mute">และมีกลิ่นอายของ '+S.ss[se].e+' '+S.ss[se].n+' ผสมอยู่ด้วย คุณอาจกำลังอยู่ในช่วงเปลี่ยนผ่านก็ได้</p>':'')+'</div>'+bars+'<p class="mute center">คะแนนนี้บอกแค่ว่าตอนนี้คุณใกล้ฤดูไหน ไม่ได้วัดสุขภาพหรือความสำเร็จของใคร</p>'+blk('ตอนนี้ชีวิตของฉันอาจกำลังเป็นอย่างไร',T.b)+blk('สิ่งที่ชีวิตกำลังชวนให้ฉันเรียนรู้',T.c)+body+'<div class="blk"><div class="blt">แบบฝึกหัดกลับมาอยู่กับตัวเอง</div>'+li(ex)+'</div><div class="blk"><div class="blt">สิ่งที่ควรระวัง</div>'+li(T.f)+'</div>'+days+say('ข้อความที่อยากฝากถึงฉัน',T.h)+'<div class="blk" style="margin-top:28px"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">การรู้จักตัวเอง เป็นจุดเริ่มต้นของการกลับมาใช้ชีวิตในแบบของเรา</div><p>หวังว่าควิซนี้จะช่วยให้คุณมองเห็นตัวเองชัดขึ้นอีกนิดนะ</p><p>บางทีเราใช้ชีวิตมานานจนชินกับการทำสิ่งที่ควรทำ รับผิดชอบสิ่งต่าง ๆ หรือพยายามไปให้ทันโลกข้างนอก จนลืมไปว่าตัวเองรู้สึกยังไง ต้องการอะไร และใช้ชีวิตแบบไหนแล้วรู้สึกว่าได้เป็นตัวเอง</p><p>การรู้ว่าตอนนี้เราอยู่ฤดูไหนเป็นแค่จุดเริ่มต้น สิ่งที่น่าสนใจต่อจากนี้คือการค่อย ๆ เข้าใจว่าอะไรหล่อเลี้ยงพลังชีวิตเรา อะไรทำให้เราเหนื่อยล้า มีความต้องการอะไรที่ยังไม่ได้ฟัง และเราจะดูแลตัวเองยังไงให้เติบโต ทำงาน รัก และใช้ชีวิตได้ โดยไม่ทิ้งตัวเองไว้ระหว่างทาง</p><p>ถ้าอยากเรียนรู้เรื่องเหล่านี้ให้ลึกขึ้น มะไหมยินดีชวนคุณมาสำรวจตัวเองไปด้วยกันนะ</p></div></div></div><div class="blk"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">มะไหมคือใคร?</div><p>มะไหม (ManassaMai) สนใจเรื่องการกลับมาเชื่อมโยงกับตัวเองผ่านร่างกาย ธรรมชาติ และภูมิปัญญาการดูแลชีวิตแบบองค์รวม</p><p style="margin-top:8px">มะไหมเชื่อว่าบางครั้งเราไม่ได้ขาดความรู้ว่าต้องทำอะไร แต่อาจกำลังห่างจากการฟังตัวเอง จนไม่แน่ใจว่าอะไรเหมาะกับชีวิตเราจริง ๆ เลยอยากชวนคนที่อยู่ในช่วงเปลี่ยนผ่านของชีวิต มากลับมาอยู่กับร่างกาย ฟังเสียงข้างใน และค่อย ๆ ออกแบบชีวิตบทใหม่ของตัวเอง ผ่านการเรียนรู้เรื่อง Body Wisdom, Somatic Listening, Self-care และภูมิปัญญาองค์รวมที่ปรับใช้ในชีวิตประจำวันได้</p></div></div></div><h2 style="margin-top:22px;font-size:1.2rem">อยากรู้จักตัวเองให้ลึกขึ้นไหม?</h2>'+paths+say('สำหรับฤดูของคุณตอนนี้','ถ้าคุณอยากลองเรียนรู้ต่อ '+T.inv+' ไม่จำเป็นต้องซื้ออะไรเลยก็ได้ แค่ฟังตัวเองต่อไปก็ถือว่าเป็นก้าวที่ดีแล้ว')+'<div class="row-btn"><a class="btn" href="'+LINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">อยากสำรวจตัวเองต่อกับมะไหม</a><a class="btn ghost" href="'+IG+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ดูกิจกรรมของมะไหมบน IG</a></div><p class="mute center" style="margin-top:8px">ทาง LINE OA มีเรียนออนไลน์ + ดาวน์โหลด Self care tool ฟรี</p><div class="row-btn"><button class="btn ghost" id="sv">คัดลอกผลไว้ทบทวนทีหลัง</button><button class="btn ghost" id="share">คัดลอกข้อความไปแชร์</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">เล่นอีกครั้ง</button></div><p class="mute center" style="margin-top:8px">ชีวิตเปลี่ยนเมื่อไร กลับมาเช็กอินใหม่ได้เสมอ</p><p class="mute center" style="margin-top:18px">“เราไม่ได้ต้องการให้ทุกคนใช้ชีวิตตามฤดูกาลเดียวกัน แต่อยากให้แต่ละคนเข้าใจฤดูกาลของตัวเองมากขึ้น และเรียนรู้ที่จะดูแลชีวิตให้สอดคล้องกับสิ่งที่ตัวเองต้องการจริง ๆ”</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ควิซนี้เป็นเครื่องมือสะท้อนตัวเอง ไม่ใช่การทำนายอนาคต การวินิจฉัยโรค หรือการแบ่งประเภทบุคลิกภาพ และไม่ได้วัดฮอร์โมนหรือภาวะสุขภาพ หากเหนื่อยล้า ปวด หรือมีการเปลี่ยนแปลงทางร่างกายที่ผิดปกติและต่อเนื่อง ควรปรึกษาบุคลากรทางการแพทย์ ถ้าคุณมีรอบเดือน จะลองสังเกตจังหวะของร่างกายควบคู่ไปด้วยก็ได้ แต่เราไม่ได้ใช้รอบเดือนตัดสินฤดูของใคร</p>';
+ app.innerHTML='<div class="sea" style="background:linear-gradient(135deg,'+T.bg+')"><div class="mute">ฤดูของคุณตอนนี้</div><div class="big">'+T.e+'</div><h2>'+T.n+'</h2><p><b>'+T.en+'</b></p><p>'+T.short+'</p>'+(se>=0?'<p class="mute">และมีกลิ่นอายของ '+S.ss[se].e+' '+S.ss[se].n+' ผสมอยู่ด้วย คุณอาจกำลังอยู่ในช่วงเปลี่ยนผ่านก็ได้</p>':'')+'</div>'+bars+'<p class="mute center">คะแนนนี้บอกแค่ว่าตอนนี้คุณใกล้ฤดูไหน ไม่ได้วัดสุขภาพหรือความสำเร็จของใคร</p>'+blk('ตอนนี้ชีวิตของฉันอาจกำลังเป็นอย่างไร',T.b)+blk('สิ่งที่ชีวิตกำลังชวนให้ฉันเรียนรู้',T.c)+body+'<div class="blk"><div class="blt">แบบฝึกหัดกลับมาอยู่กับตัวเอง</div>'+li(ex)+'</div><div class="blk"><div class="blt">สิ่งที่ควรระวัง</div>'+li(T.f)+'</div>'+days+say('ข้อความที่อยากฝากถึงฉัน',T.h)+'<div class="blk" style="margin-top:28px"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">การรู้จักตัวเอง เป็นจุดเริ่มต้นของการกลับมาใช้ชีวิตในแบบของเรา</div><p>หวังว่าควิซนี้จะช่วยให้คุณมองเห็นตัวเองชัดขึ้นอีกนิดนะ</p><p>บางทีเราใช้ชีวิตมานานจนชินกับการทำสิ่งที่ควรทำ รับผิดชอบสิ่งต่าง ๆ หรือพยายามไปให้ทันโลกข้างนอก จนลืมไปว่าตัวเองรู้สึกยังไง ต้องการอะไร และใช้ชีวิตแบบไหนแล้วรู้สึกว่าได้เป็นตัวเอง</p><p>การรู้ว่าตอนนี้เราอยู่ฤดูไหนเป็นแค่จุดเริ่มต้น สิ่งที่น่าสนใจต่อจากนี้คือการค่อย ๆ เข้าใจว่าอะไรหล่อเลี้ยงพลังชีวิตเรา อะไรทำให้เราเหนื่อยล้า มีความต้องการอะไรที่ยังไม่ได้ฟัง และเราจะดูแลตัวเองยังไงให้เติบโต ทำงาน รัก และใช้ชีวิตได้ โดยไม่ทิ้งตัวเองไว้ระหว่างทาง</p><p>ถ้าอยากเรียนรู้เรื่องเหล่านี้ให้ลึกขึ้น มะไหมยินดีชวนคุณมาสำรวจตัวเองไปด้วยกันนะ</p></div></div></div><div class="blk"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">มะไหมคือใคร?</div><p>มะไหม (ManassaMai) สนใจเรื่องการกลับมาเชื่อมโยงกับตัวเองผ่านร่างกาย ธรรมชาติ และภูมิปัญญาการดูแลชีวิตแบบองค์รวม</p><p style="margin-top:8px">มะไหมเชื่อว่าบางครั้งเราไม่ได้ขาดความรู้ว่าต้องทำอะไร แต่อาจกำลังห่างจากการฟังตัวเอง จนไม่แน่ใจว่าอะไรเหมาะกับชีวิตเราจริง ๆ เลยอยากชวนคนที่อยู่ในช่วงเปลี่ยนผ่านของชีวิต มากลับมาอยู่กับร่างกาย ฟังเสียงข้างใน และค่อย ๆ ออกแบบชีวิตบทใหม่ของตัวเอง ผ่านการเรียนรู้เรื่อง Body Wisdom, Somatic Listening, Self-care และภูมิปัญญาองค์รวมที่ปรับใช้ในชีวิตประจำวันได้</p></div></div></div><h2 style="margin-top:22px;font-size:1.2rem">อยากรู้จักตัวเองให้ลึกขึ้นไหม?</h2>'+paths+say('สำหรับฤดูของคุณตอนนี้','ถ้าคุณอยากลองเรียนรู้ต่อ '+T.inv+' ไม่จำเป็นต้องซื้ออะไรเลยก็ได้ แค่ฟังตัวเองต่อไปก็ถือว่าเป็นก้าวที่ดีแล้ว')+'<div class="row-btn"><a class="btn" href="'+LINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">อยากสำรวจตัวเองต่อกับมะไหม</a><a class="btn ghost" href="'+IG+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ดูกิจกรรมของมะไหมบน IG</a></div><p class="mute center" style="margin-top:8px">ทาง LINE OA มีเรียนออนไลน์ + ดาวน์โหลด Self care tool ฟรี</p><div class="row-btn"><button class="btn ghost" id="sv">คัดลอกผลไว้ทบทวนทีหลัง</button><button class="btn ghost" id="share">แชร์ผลเป็นรูป</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">เล่นอีกครั้ง</button></div><p class="mute center" style="margin-top:8px">ชีวิตเปลี่ยนเมื่อไร กลับมาเช็กอินใหม่ได้เสมอ</p><p class="mute center" style="margin-top:18px">“เราไม่ได้ต้องการให้ทุกคนใช้ชีวิตตามฤดูกาลเดียวกัน แต่อยากให้แต่ละคนเข้าใจฤดูกาลของตัวเองมากขึ้น และเรียนรู้ที่จะดูแลชีวิตให้สอดคล้องกับสิ่งที่ตัวเองต้องการจริง ๆ”</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ควิซนี้เป็นเครื่องมือสะท้อนตัวเอง ไม่ใช่การทำนายอนาคต การวินิจฉัยโรค หรือการแบ่งประเภทบุคลิกภาพ และไม่ได้วัดฮอร์โมนหรือภาวะสุขภาพ หากเหนื่อยล้า ปวด หรือมีการเปลี่ยนแปลงทางร่างกายที่ผิดปกติและต่อเนื่อง ควรปรึกษาบุคลากรทางการแพทย์ ถ้าคุณมีรอบเดือน จะลองสังเกตจังหวะของร่างกายควบคู่ไปด้วยก็ได้ แต่เราไม่ได้ใช้รอบเดือนตัดสินฤดูของใคร</p>';
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=seasonsIntro;
  var sv=document.getElementById("sv"),sh=document.getElementById("share");
  sv.onclick=function(){copyTxt(sv,"ฤดูของฉันตอนนี้: "+T.e+" "+T.n+" ("+T.en+")\nคำถามสะท้อนตัวเอง: "+T.q+"?\n| ManassaMai")};
- sh.onclick=function(){copyTxt(sh,"ตอนนี้ชีวิตของฉันอยู่ใน "+T.e+" "+T.n+" ("+T.en+") "+T.short+" | ManassaMai")};
+ sh.onclick=function(){shareCard(sh,"ตอนนี้ชีวิตของฉันอยู่ใน "+T.e+" "+T.n+" ("+T.en+") "+T.short+" | ManassaMai",{label:"ฤดูของชีวิตฉันตอนนี้",head:T.e+" "+T.n+" ("+T.en+")",lines:[T.short]})};
  window.scrollTo(0,0);
 }
 
@@ -900,13 +1035,13 @@ function resultNourish(){
  +'<div class="blk"><div class="blt">ระดับ 2 · อยากเข้าใจตัวเองให้ลึกขึ้น</div><p>ถ้าอยากกลับมาเชื่อมโยงกับร่างกาย สำรวจความต้องการข้างใน และเรียนรู้วิธีดูแลตัวเองให้เหมาะกับธรรมชาติของชีวิต บริการของมะไหมที่เกี่ยวกับผลของคุณคือ</p><ul>'+svc.map(function(s){return '<li>'+s+'</li>'}).join("")+'</ul><p class="mute">ไม่จำเป็นต้องเริ่มอะไรเลยก็ได้ ถ้ายังไม่พร้อม</p></div>'
  +'<div class="blk"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">ระดับ 3 · อยากมีพื้นที่เรียนรู้ร่วมกัน</div><p>ถ้าอ่านมาถึงตรงนี้แล้วรู้สึกว่าหลายเรื่องเริ่มชัดขึ้น แต่ยังไม่แน่ใจว่าจะเอาไปปรับกับชีวิตจริงยังไง ไม่ต้องหาคำตอบทั้งหมดคนเดียวก็ได้นะ</p>'+lows.map(function(k){return '<p style="margin-top:8px">'+D[k].inv+'</p>'}).join("")+'</div></div></div>'
  +'<div class="row-btn"><a class="btn" href="'+LINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ทักมาคุยกับมะไหม</a><a class="btn ghost" href="'+IG+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ดูกิจกรรมของมะไหมบน IG</a></div><p class="mute center" style="margin-top:8px">ทาง LINE OA มีเรียนออนไลน์ + ดาวน์โหลด Self care tool ฟรี</p>'
- +'<div class="row-btn"><button class="btn ghost" id="sv">คัดลอกผลไว้ทบทวนทีหลัง</button><button class="btn ghost" id="share">คัดลอกข้อความไปแชร์</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">เล่นอีกครั้ง</button></div>'
+ +'<div class="row-btn"><button class="btn ghost" id="sv">คัดลอกผลไว้ทบทวนทีหลัง</button><button class="btn ghost" id="share">แชร์ผลเป็นรูป</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">เล่นอีกครั้ง</button></div>'
  +'<p class="mute center" style="margin-top:18px">“ช่วยคนที่กำลังอยู่ตรงรอยต่อของชีวิต กลับมาอยู่กับร่างกาย ฟังเสียงข้างใน และออกแบบวิถีชีวิตบทใหม่ที่เป็นของตัวเอง”</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ควิซนี้เป็นเครื่องมือสะท้อนตัวเองเพื่อการเรียนรู้จักตัวเอง ไม่ใช่การวินิจฉัยสุขภาพหรือบุคลิกภาพ และไม่ใช่แบบประเมินทางวิทยาศาสตร์ หากเหนื่อยล้า ปวด หรือมีอาการทางกายที่ผิดปกติและต่อเนื่อง ควรปรึกษาบุคลากรทางการแพทย์</p>';
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=nourishIntro;
  var sv=document.getElementById("sv"),sh=document.getElementById("share");
  sv.onclick=function(){copyTxt(sv,"ชีวิตของฉันกำลังชวนให้กลับมาดูแล: "+lows.map(function(k){return D[k].n+" ("+D[k].en+")"}).join(" + ")+(highs.length?"\nจุดแข็งตอนนี้: "+highs.map(function(k){return D[k].en}).join(" + "):"")+"\nคำถามสะท้อนตัวเอง: "+D[lows[0]].h[0]+"?\n| ManassaMai")};
- sh.onclick=function(){copyTxt(sh,"ตอนนี้ชีวิตของฉันกำลังชวนให้กลับมาดูแล "+lows.map(function(k){return D[k].e+" "+D[k].en}).join(" + ")+" | ManassaMai")};
+ sh.onclick=function(){shareCard(sh,"ตอนนี้ชีวิตของฉันกำลังชวนให้กลับมาดูแล "+lows.map(function(k){return D[k].e+" "+D[k].en}).join(" + ")+" | ManassaMai",{label:"ชีวิตของฉันกำลังชวนให้กลับมาดูแล",head:lows.map(function(k){return D[k].e+" "+D[k].en}).join(" + "),lines:(highs.length?["จุดแข็งตอนนี้: "+highs.map(function(k){return D[k].en}).join(" + ")]:[]).concat([D[lows[0]].h[0]+"?"])})};
  window.scrollTo(0,0);
 }
 
@@ -960,12 +1095,12 @@ function resultRooted(){
  +'<div class="blk"><div class="blt">ที่เกี่ยวกับผลของคุณ</div>'+'<ul>'+svc.map(function(s){return '<li>'+s+'</li>'}).join("")+'</ul>'+(womb?'<p class="mute">ถ้าสนใจการดูแลตัวเองในมิติผู้หญิง มะไหมมี Womb Healing เป็นอีกทางเลือก ไม่จำเป็นสำหรับทุกคน</p>':'')+'<p class="mute">ไม่จำเป็นต้องเริ่มอะไรเลยก็ได้ ถ้ายังไม่พร้อม</p></div>'
  +'<div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><p>ถ้าคุณอยากสำรวจเรื่องนี้ต่อกับมะไหม ลองทักมาคุยกันได้นะ เราค่อย ๆ ดูไปด้วยกันว่าตอนนี้คุณต้องการพื้นที่แบบไหนสำหรับตัวเอง</p></div></div>'
  +'<div class="row-btn"><a class="btn" href="'+LINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ทักมาคุยกับมะไหม</a><a class="btn ghost" href="'+IG+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ดูกิจกรรมของมะไหมบน IG</a></div><p class="mute center" style="margin-top:8px">ทาง LINE OA มีเรียนออนไลน์ + ดาวน์โหลด Self care tool ฟรี</p>'
- +'<div class="row-btn"><button class="btn ghost" id="sv">คัดลอกผลไว้ทบทวนทีหลัง</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">ทำอีกครั้ง</button></div>'
+ +'<div class="row-btn"><button class="btn ghost" id="sv">แชร์ผลเป็นรูป</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">ทำอีกครั้ง</button></div>'
  +'<p class="mute center" style="margin-top:18px">“เราไม่ได้ต้องการให้คุณรู้ว่าตัวเองเป็นใคร แต่อยากให้คุณหยุดถามว่าควรเป็นใคร แล้วกลับมาฟังว่าลึก ๆ ตัวเองกำลังต้องการอะไร”</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ควิซนี้เป็นพื้นที่ให้หยุดและฟังตัวเอง ไม่ใช่การวินิจฉัยสุขภาพกายหรือสุขภาพจิต และไม่ได้ตัดสินว่าใครมีจิตวิญญาณแบบไหน หากเหนื่อยล้า ปวด หรือมีอาการที่ผิดปกติและต่อเนื่อง ควรปรึกษาบุคลากรทางการแพทย์</p>';
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=rootedIntro;
  var sv=document.getElementById("sv");
- sv.onclick=function(){copyTxt(sv,"Rooted In You: "+R.e+" "+R.n+" ("+R.en+")"+(se>=0?"\nด้านที่สนับสนุน: "+S.rs[se].n:"")+"\n"+R.core+"\nคำถามที่อยากพากลับไปใช้: "+R.qn[0]+"?\n| ManassaMai")};
+ sv.onclick=function(){shareCard(sv,"Rooted In You: "+R.e+" "+R.n+" ("+R.en+")"+(se>=0?"\nด้านที่สนับสนุน: "+S.rs[se].n:"")+"\n"+R.core+"\nคำถามที่อยากพากลับไปใช้: "+R.qn[0]+"?\n| ManassaMai")};
  window.scrollTo(0,0);
 }
 
@@ -1042,7 +1177,7 @@ function resultSpark(){
  else main=tops.map(function(k,x){return '<details class="day"'+(tops.length===2||x===0?' open':'')+'><summary>'+R[k].e+' '+R[k].en+' · '+R[k].th+'</summary>'+sparkHtml(R[k],'ช่วงนี้หัวใจคุณถูกหล่อเลี้ยงด้วย')+'</details>'}).join("");
  var head=tops.length===1?R[tops[0]].e+' '+R[tops[0]].en:tops.map(function(k){return R[k].e+' '+R[k].en}).join(' + ');
  app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลของ '+S.title+'</div><h2>'+head+'</h2><p class="mute">'+(tops.length===1?R[tops[0]].th:'รูปแบบผสม')+'</p></div>'+note+bars+main+sparkNext(tops)
- +'<div class="row-btn"><button class="btn" id="sv">คัดลอกผลลัพธ์</button><button class="btn ghost" id="sn">คัดลอกบันทึกของฉัน</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">ทำแบบทดสอบอีกครั้ง</button></div>'
+ +'<div class="row-btn"><button class="btn" id="sv">แชร์ผลเป็นรูป</button><button class="btn ghost" id="sn">คัดลอกบันทึกของฉัน</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">ทำแบบทดสอบอีกครั้ง</button></div>'
  +'<p class="mute center" style="margin-top:18px">ผลนี้เป็นเพียงกระจกสะท้อนความต้องการในช่วงนี้ ไม่ใช่ตัวตนทั้งหมดของคุณ และเปลี่ยนได้ตามช่วงชีวิต ไม่ได้บอกว่าใครมีพลังชีวิตมากหรือน้อย</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p>';
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=sparkIntro;
@@ -1051,7 +1186,7 @@ function resultSpark(){
  var sn=document.getElementById("sn");
  sn.onclick=function(){var t=[],z=app.querySelectorAll("textarea"),q;for(q=0;q<z.length;q++){if(z[q].value&&z[q].value.replace(/\s/g,""))t.push(z[q].getAttribute("data-t")+"\n"+z[q].value)}copyTxt(sn,t.length?"My Spark Joy Practice\n\n"+t.join("\n\n")+"\n| ManassaMai":"ยังไม่มีบันทึก ลองจดสักบรรทัดก่อนนะ")};
  var sv=document.getElementById("sv");
- sv.onclick=function(){copyTxt(sv,"Find Your Spark Joy: "+tops.map(function(k){return R[k].e+" "+R[k].en+" ("+R[k].th+")"}).join(" + ")+"\n"+R[tops[0]].tag+"\nคำถามชวนฟังหัวใจ: "+R[tops[0]].qn[0]+"?\n| ManassaMai")};
+ sv.onclick=function(){shareCard(sv,"Find Your Spark Joy: "+tops.map(function(k){return R[k].e+" "+R[k].en+" ("+R[k].th+")"}).join(" + ")+"\n"+R[tops[0]].tag+"\nคำถามชวนฟังหัวใจ: "+R[tops[0]].qn[0]+"?\n| ManassaMai")};
  window.scrollTo(0,0);
 }
 
@@ -1130,13 +1265,13 @@ function resultPeace(){
  if(tops.length===1)main=peaceHtml(P[tops[0]],'ความสงบในใจของคุณเหมือน')+(sup>=0?'<details class="day"><summary>'+P[sup].e+' อีกที่ที่ใกล้เคียง: '+P[sup].n+' · '+P[sup].en+'</summary>'+peaceHtml(P[sup],'อีกที่ที่ใกล้เคียง')+'</details>':'');
  else main=tops.map(function(k,x){return '<details class="day"'+(x===0?' open':'')+'><summary>'+P[k].e+' '+P[k].n+' · '+P[k].en+'</summary>'+peaceHtml(P[k],'ความสงบในใจของคุณเหมือน')+'</details>'}).join("");
  app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลของ '+S.title+'</div><h2>'+head+'</h2></div>'+note+bars+main+'<div id="gd"></div>'
- +'<div class="row-btn"><button class="btn" id="sv">คัดลอกผล</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">ทำอีกครั้ง</button></div>'
+ +'<div class="row-btn"><button class="btn" id="sv">แชร์ผลเป็นรูป</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">ทำอีกครั้ง</button></div>'
  +'<p class="mute center" style="margin-top:18px">ผลนี้เป็นภาพเปรียบเทียบให้ใจได้สะท้อนตัวเอง ไม่ใช่ตัวตนทั้งหมดของคุณ และไม่ใช่การวินิจฉัย ความสงบของคุณเปลี่ยนที่ได้ตามช่วงชีวิต</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p>';
  drawGround();
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=peaceIntro;
  var sv=document.getElementById("sv");
- sv.onclick=function(){copyTxt(sv,"ความสงบในใจของฉันเหมือน "+tops.map(function(k){return P[k].e+" "+P[k].n+" ("+P[k].en+")"}).join(" + ")+"\n"+P[tops[0]].tag+"\n| ManassaMai")};
+ sv.onclick=function(){shareCard(sv,"ความสงบในใจของฉันเหมือน "+tops.map(function(k){return P[k].e+" "+P[k].n+" ("+P[k].en+")"}).join(" + ")+"\n"+P[tops[0]].tag+"\n| ManassaMai")};
  window.scrollTo(0,0);
 }
 
@@ -1202,13 +1337,13 @@ function resultBys(){
  +sayH('','<p>ผลนี้เป็นแค่จุดเริ่มต้นของการเรียนรู้ตัวเอง ถ้าอยากสำรวจต่อ ManassaMai มีพื้นที่เรียนรู้ผ่านร่างกาย จิตใจ ธาตุ และการดูแลตัวเองอย่างองค์รวม</p><p>คุณไม่จำเป็นต้องรอให้ร่างกายเหนื่อยจนไม่ไหว จึงจะเริ่มดูแลตัวเองได้ บางทีการเปลี่ยนแปลงครั้งสำคัญอาจเริ่มจากการหยุดฟังตัวเองสักนิด แล้วเลือกทำสิ่งเล็ก ๆ ที่ไม่ทำให้เราต้องทอดทิ้งตัวเองอีกต่อไป</p>')
  +'<details class="day"><summary>บริการที่เกี่ยวกับผลของคุณ</summary><ul>'+svc.map(function(k){return '<li>'+S.svcs[k]+'</li>'}).join("")+(womb?'<li>'+S.womb+'</li>':'')+'</ul><p class="mute">เป็นตัวเลือกสำหรับผู้สนใจ ไม่ใช่การรักษาโรค เลือกเฉพาะที่รู้สึกว่าใช่ หรือไม่เลือกเลยก็ได้</p></details>'
  +'<div class="row-btn"><button class="btn" id="ct">ดูช่องทางติดต่อ</button><a class="btn ghost" href="'+LINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ทักมาคุยกับมะไหม</a><a class="btn ghost" href="'+IG+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ดูกิจกรรมบน IG</a></div><p class="mute center" style="margin-top:8px">ทาง LINE OA มีเรียนออนไลน์ + ดาวน์โหลด Self care tool ฟรี</p>'
- +'<div class="row-btn"><button class="btn ghost" id="sv">คัดลอกผลลัพธ์</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">เริ่มใหม่</button></div>'
+ +'<div class="row-btn"><button class="btn ghost" id="sv">แชร์ผลเป็นรูป</button><button class="btn ghost" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="again">เริ่มใหม่</button></div>'
  +'<p class="mute center" style="margin-top:18px">ผลนี้เป็นเครื่องมือสะท้อนตัวเองเพื่อการเรียนรู้ ไม่ใช่การวินิจฉัยโรคหรือภาวะทางจิต และไม่ได้บอกว่าอวัยวะหรือธาตุใดผิดปกติ หากมีอาการทางกายที่ต่อเนื่อง รุนแรง หรือผิดปกติ ควรปรึกษาบุคลากรทางการแพทย์</p><p class="mute center"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p>';
  document.getElementById("ct").onclick=function(){idx=SETS.length-1;S=SETS[idx];contact()};
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=bysIntro;
  var sv=document.getElementById("sv");
- sv.onclick=function(){copyTxt(sv,"Before Your Body Screams: "+R[main].e+" "+R[main].en+" ("+R[main].th+")"+(sup>=0?"\nรูปแบบรอง: "+R[sup].en:"")+"\n"+R[main].tag+"\nคำถามจดบันทึก: "+R[main].jr[0]+"?\n| ManassaMai")};
+ sv.onclick=function(){shareCard(sv,"Before Your Body Screams: "+R[main].e+" "+R[main].en+" ("+R[main].th+")"+(sup>=0?"\nรูปแบบรอง: "+R[sup].en:"")+"\n"+R[main].tag+"\nคำถามจดบันทึก: "+R[main].jr[0]+"?\n| ManassaMai")};
  window.scrollTo(0,0);
 }
 
@@ -1229,13 +1364,13 @@ function resultPick(){
  var F=S.flowers[r[0]],sec=c[r[1]]>=2?S.flowers[r[1]]:null;
  done[idx]='ได้ '+F.n;
  var blk=function(t,x){return '<div class="blk"><div class="blt">'+t+'</div><p>'+x+'</p></div>'};
- app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลชุด '+S.title+'</div><div class="big">'+F.e+'</div><div class="mute">ตอนนี้คุณคือ</div><h2>'+F.n+'</h2>'+(sec?'<p class="mute">และมีกลิ่นอายของ '+sec.e+' '+sec.n+' อยู่ด้วย</p>':'')+'</div>'+blk('ตอนนี้ใจคุณเป็นแบบนี้',F.now)+blk('ที่ที่คุณจะเติบโตได้ดี',F.place)+blk('ความต้องการที่แท้จริงของจิตวิญญาณ',F.soul)+'<h2 style="margin-top:24px;font-size:1.2rem">ลองทำวันนี้</h2><ul>'+F.tips.map(function(t){return'<li>'+t+'</li>'}).join("")+'</ul><div class="row-btn"><button class="btn" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="share">คัดลอกผลไปแชร์</button><button class="btn ghost" id="again">ทำชุดนี้อีกครั้ง</button></div><p class="mute center" style="margin-top:22px"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ผลนี้เป็นภาพเปรียบเทียบเพื่อความสนุกและให้ลองสะท้อนใจตัวเอง ไม่ใช่การวินิจฉัย หากรู้สึกหนักใจมาก คุยกับคนที่ไว้ใจหรือผู้เชี่ยวชาญได้ ในไทยโทรสายด่วนสุขภาพจิต 1323 ได้ตลอด 24 ชั่วโมง</p>';
+ app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลชุด '+S.title+'</div><div class="big">'+F.e+'</div><div class="mute">ตอนนี้คุณคือ</div><h2>'+F.n+'</h2>'+(sec?'<p class="mute">และมีกลิ่นอายของ '+sec.e+' '+sec.n+' อยู่ด้วย</p>':'')+'</div>'+blk('ตอนนี้ใจคุณเป็นแบบนี้',F.now)+blk('ที่ที่คุณจะเติบโตได้ดี',F.place)+blk('ความต้องการที่แท้จริงของจิตวิญญาณ',F.soul)+'<h2 style="margin-top:24px;font-size:1.2rem">ลองทำวันนี้</h2><ul>'+F.tips.map(function(t){return'<li>'+t+'</li>'}).join("")+'</ul><div class="row-btn"><button class="btn" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="share">แชร์ผลเป็นรูป</button><button class="btn ghost" id="again">ทำชุดนี้อีกครั้ง</button></div><p class="mute center" style="margin-top:22px"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">ผลนี้เป็นภาพเปรียบเทียบเพื่อความสนุกและให้ลองสะท้อนใจตัวเอง ไม่ใช่การวินิจฉัย หากรู้สึกหนักใจมาก คุยกับคนที่ไว้ใจหรือผู้เชี่ยวชาญได้ ในไทยโทรสายด่วนสุขภาพจิต 1323 ได้ตลอด 24 ชั่วโมง</p>';
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=function(){ans=[];ord=[];i=0;askPick()};
  var sh=document.getElementById("share");
  sh.onclick=function(){
   var txt="ตอนนี้ฉันคือ "+F.e+" "+F.n+" | ManassaMai";
-  try{navigator.clipboard.writeText(txt).then(function(){sh.textContent="คัดลอกแล้ว"},function(){sh.textContent=txt})}catch(e){sh.textContent=txt}
+  shareCard(sh,txt,{label:"ตอนนี้ฉันคือ",head:F.e+" "+F.n,lines:[F.now]})
  };
  window.scrollTo(0,0);
 }
@@ -1271,14 +1406,14 @@ function result(){
  var sorted=rows.slice().sort(function(a,b){return a.p-b.p});
  var tips=S.tips[sorted[0].n].concat([S.tips[sorted[1].n][0]]);
  var C=2*Math.PI*74;
- app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลชุด '+S.title+'</div><h2>'+lv[1]+'</h2><div class="ring"><svg width="170" height="170" viewBox="0 0 170 170" aria-hidden="true"><circle class="t" cx="85" cy="85" r="74"/><circle class="f" id="f" cx="85" cy="85" r="74" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"/></svg><b>'+all+'%</b></div><p>'+lv[2]+'</p></div>'+bars+'<h2 style="margin-top:24px;font-size:1.2rem">ลองทำวันนี้</h2><ul>'+tips.map(function(t){return'<li>'+esc(t)+'</li>'}).join("")+'</ul><div class="row-btn"><button class="btn" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="share">คัดลอกผลไปแชร์</button><button class="btn ghost" id="again">ทำชุดนี้อีกครั้ง</button></div><p class="mute center" style="margin-top:22px"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">แบบทดสอบนี้ใช้เพื่อสะท้อนตัวเอง ไม่ใช่การวินิจฉัย หากรู้สึกหนักใจมาก คุยกับคนที่ไว้ใจหรือผู้เชี่ยวชาญได้ ในไทยโทรสายด่วนสุขภาพจิต 1323 ได้ตลอด 24 ชั่วโมง</p>';
+ app.innerHTML='<div class="center"><div class="mute">'+S.ic+' ผลชุด '+S.title+'</div><h2>'+lv[1]+'</h2><div class="ring"><svg width="170" height="170" viewBox="0 0 170 170" aria-hidden="true"><circle class="t" cx="85" cy="85" r="74"/><circle class="f" id="f" cx="85" cy="85" r="74" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'"/></svg><b>'+all+'%</b></div><p>'+lv[2]+'</p></div>'+bars+'<h2 style="margin-top:24px;font-size:1.2rem">ลองทำวันนี้</h2><ul>'+tips.map(function(t){return'<li>'+esc(t)+'</li>'}).join("")+'</ul><div class="row-btn"><button class="btn" id="next">เลือกชุดอื่นต่อ</button><button class="btn ghost" id="share">แชร์ผลเป็นรูป</button><button class="btn ghost" id="again">ทำชุดนี้อีกครั้ง</button></div><p class="mute center" style="margin-top:22px"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p><p class="mute note">แบบทดสอบนี้ใช้เพื่อสะท้อนตัวเอง ไม่ใช่การวินิจฉัย หากรู้สึกหนักใจมาก คุยกับคนที่ไว้ใจหรือผู้เชี่ยวชาญได้ ในไทยโทรสายด่วนสุขภาพจิต 1323 ได้ตลอด 24 ชั่วโมง</p>';
  setTimeout(function(){var f=document.getElementById("f");if(f)f.style.strokeDashoffset=C*(1-all/100)},60);
  document.getElementById("next").onclick=home;
  document.getElementById("again").onclick=function(){ans=[];i=0;ask()};
  var sh=document.getElementById("share");
  sh.onclick=function(){
   var txt="ผลแบบทดสอบ "+S.title+" ของฉัน: "+lv[1]+" ("+all+"%) | ManassaMai";
-  try{navigator.clipboard.writeText(txt).then(function(){sh.textContent="คัดลอกแล้ว"},function(){sh.textContent=txt})}catch(e){sh.textContent=txt}
+  shareCard(sh,txt,{label:"ผลชุด "+S.title,head:lv[1]+" ("+all+"%)",lines:[lv[2]]})
  };
  window.scrollTo(0,0);
 }
