@@ -179,6 +179,9 @@ ul{padding-left:20px;margin:0 0 14px}li{margin-bottom:8px}
 .mailpanel .mp-a{font-weight:600;word-break:break-all;user-select:all;-webkit-user-select:all}
 .mailpanel .mp-o{display:inline-block;margin-top:10px;font-size:.86rem;color:var(--accent)}
 .mailpanel .mp-s{font-size:.84rem;color:var(--mute);margin:8px 0 0;min-height:1.2em}
+.shopcp-w{text-align:center;margin-top:12px}
+.shopcp-w .btn{font-size:.9rem;padding:9px 18px}
+.shopcp-m{font-size:.76rem;word-break:break-all;margin:6px 0 0;min-height:0}
 @media print{.flora,.row-btn,body::before{display:none!important}body{background:#fff!important}main{max-width:none}.blk,.sea,.q{box-shadow:none!important}}
 </style>
 </head>
@@ -1181,6 +1184,28 @@ function svcPage(kind){
  document.getElementById("bs").onclick=function(){contact("svc")};
  window.scrollTo(0,0);
 }
+document.addEventListener("click",function(e){
+ var t=e.target.closest?e.target.closest(".shopcp"):null;if(!t)return;
+ var url=baseUrl()+"?set=contact&go=shop",m=t.parentNode.querySelector(".shopcp-m");
+ var lab=t.getAttribute("data-l")||t.textContent;t.setAttribute("data-l",lab);
+ copyText(url,function(){t.textContent="คัดลอกลิงก์แล้ว ✓";if(m)m.textContent="";setTimeout(function(){t.textContent=lab},2200)},function(){if(m)m.textContent=url});
+});
+function shopCpHtml(){return '<div class="shopcp-w"><button class="btn ghost shopcp" type="button">🔗 คัดลอกลิงก์ Shop</button><p class="mute shopcp-m" role="status" aria-live="polite"></p></div>'}
+var SHOPI=[
+ {e:"🌿",t:"เครื่องมือดูแลตัวเอง",d:"อุปกรณ์เล็ก ๆ ที่ช่วยให้เราหยุดพัก หายใจ และกลับมารับรู้ร่างกายของตัวเองได้ง่ายขึ้นในแต่ละวัน"},
+ {e:"🌸",t:"ผลิตภัณฑ์จากธรรมชาติและดอกไม้",d:"ของใช้ที่คัดสรรจากพลังของพืชและดอกไม้ เพื่อให้ช่วงเวลาดูแลตัวเองอบอุ่นและมีความหมายมากขึ้น"},
+ {e:"🌙",t:"ชุดเริ่มต้นสำหรับพักและฟื้นฟู",d:"ชุดที่จัดไว้ให้พร้อมใช้ สำหรับวันที่อยากเริ่มดูแลตัวเองแต่ยังไม่รู้จะเริ่มตรงไหน"},
+ {e:"🎁",t:"ของขวัญแห่งการดูแลใจ",d:"ของฝากสำหรับคนที่เรารัก เป็นกำลังใจเล็ก ๆ ที่บอกว่า เราห่วงใยและอยากให้เขาได้พักบ้างนะ"}
+];
+function shopPage(){
+ var L=SHOPI.map(function(it){return '<div class="blk" style="margin-top:12px"><div class="say"><span class="big" aria-hidden="true" style="font-size:1.7rem;margin:0">'+it.e+'</span><div><div class="blt">'+it.t+'</div><p>'+it.d+'</p></div></div></div>'}).join("");
+ app.innerHTML='<div class="mute">'+S.ic+' Contact me &amp; Services</div><div class="center" style="margin-top:6px"><div class="big" aria-hidden="true">🛍️</div><p class="sv-eyebrow">Shop · Coming Soon</p><h2>Self-care Products &amp; Tools</h2><p><b>ผลิตภัณฑ์และเครื่องมือที่ช่วยให้เราดูแลตัวเองได้ใกล้ชิดขึ้น</b></p><p>มะไหมกำลังค่อย ๆ คัดสรรและเตรียมพื้นที่นี้ด้วยความตั้งใจ ตอนนี้ยังไม่เปิดให้สั่งซื้อ แต่อยากชวนให้ติดตามไปด้วยกันนะคะ</p></div><p class="mute center">สิ่งที่กำลังเตรียมไว้ให้คุณ</p>'+L
+ +'<div class="blk" style="margin-top:22px"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">รู้ก่อนใครเมื่อเปิดตัว 💛</div><p>ทักมาที่ LINE OA ของมะไหมได้เลยค่ะ เมื่อ Shop พร้อมเปิด จะแจ้งให้ทราบเป็นกลุ่มแรก</p></div></div><div class="row-btn"><a class="btn" href="'+CLINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">ติดตามที่ LINE OA</a></div></div>'
+ +shopCpHtml()+'<div class="row-btn"><button class="btn ghost" id="bs">กลับ Contact me &amp; Services</button></div>'
+ +'<p class="mute center" style="margin-top:22px"><b>ManassaMai 🌸</b><span class="brand-sub">Life is a Gift. Let Life Flourish in Harmony.</span></p>';
+ document.getElementById("bs").onclick=function(){contact("shop")};
+ window.scrollTo(0,0);
+}
 function contact(anchor){
  var rows=[
   ["Facebook page","ManassaMai Self care & Holistic Healing Workshop","",""],
@@ -1194,8 +1219,9 @@ function contact(anchor){
   return '<div class="ct"><div><b>'+r[0]+'</b><span>'+v+'</span>'+(r[3]?' <small class="mute">'+r[3]+'</small>':'')+(r[4]?'<div class="ctd">'+r[4]+'</div>':'')+'</div><button class="cp" data-k="'+k+'">คัดลอก</button></div>';
  }).join("");
  var svcCards=["personal","corporate"].map(function(k){var V=SVC[k];return '<button class="card" data-sv="'+k+'"><span class="ic" aria-hidden="true">'+V.e+'</span><span><b>'+V.t+'</b><span class="mute">'+V.th+'</span><span class="tag">'+(k==="personal"?"EXPLORE PERSONAL SERVICES":"CORPORATE &amp; ORGANIZATION")+' →</span></span></button>'}).join("");
- app.innerHTML='<div class="mute">'+S.ic+' Contact me &amp; Services</div><div class="chips nav"><button class="chip" data-go="svc">บริการ</button><button class="chip" data-go="about">เกี่ยวกับมะไหม</button><button class="chip" data-go="connect">ติดต่อ</button></div><img class="pic" src="'+PIC+'" alt="ผู้ก่อตั้ง ManassaMai"><div class="center"><h2>มะไหม</h2><p><b>มนัสวี ศุระศรางค์</b></p><h2 class="role">Nature-Based Healing &amp; Body Wisdom Facilitator</h2><p>นักบำบัดแนวธรรมชาติบำบัด ผู้เชื่อมโยงพลังของสมดุลธาตุ พลังของธรรมชาติ และดอกไม้ในการดูแลผู้คน</p></div><div class="blk"><div class="blt">สำเร็จการศึกษา</div><p>กายภาพบำบัด แพทย์แผนไทย จิตตปัญญาศึกษา (กระบวนกร) และศาสตร์บำบัดต่าง ๆ</p></div>'
+ app.innerHTML='<div class="mute">'+S.ic+' Contact me &amp; Services</div><div class="chips nav"><button class="chip" data-go="svc">บริการ</button><button class="chip" data-go="shop">Shop</button><button class="chip" data-go="about">เกี่ยวกับมะไหม</button><button class="chip" data-go="connect">ติดต่อ</button></div><img class="pic" src="'+PIC+'" alt="ผู้ก่อตั้ง ManassaMai"><div class="center"><h2>มะไหม</h2><p><b>มนัสวี ศุระศรางค์</b></p><h2 class="role">Nature-Based Healing &amp; Body Wisdom Facilitator</h2><p>นักบำบัดแนวธรรมชาติบำบัด ผู้เชื่อมโยงพลังของสมดุลธาตุ พลังของธรรมชาติ และดอกไม้ในการดูแลผู้คน</p></div><div class="blk"><div class="blt">สำเร็จการศึกษา</div><p>กายภาพบำบัด แพทย์แผนไทย จิตตปัญญาศึกษา (กระบวนกร) และศาสตร์บำบัดต่าง ๆ</p></div>'
  +'<div class="sec" id="svc"><p class="sv-eyebrow">Services</p><h2>บริการของมะไหม</h2><p class="mute sd">เลือกดูตามที่เหมาะกับคุณได้เลยนะคะ แตะแล้วจะเห็นรายละเอียดทีละหัวข้อ ไม่ต้องอ่านทั้งหมดในครั้งเดียว</p><div class="cards" style="margin:14px 0 0">'+svcCards+'</div></div>'
+ +'<div class="sec" id="shop"><p class="sv-eyebrow">Shop</p><h2>Self-care Products &amp; Tools</h2><p class="mute sd">ของเล็ก ๆ ที่ช่วยให้เราดูแลตัวเองได้ใกล้ชิดขึ้นในทุกวัน</p><div class="cards" style="margin:14px 0 0"><button class="card" id="shopCard"><span class="ic" aria-hidden="true">🛍️</span><span><b>Shop</b><span class="mute">ผลิตภัณฑ์และเครื่องมือดูแลตัวเอง</span><span class="tag">COMING SOON →</span></span></button></div>'+shopCpHtml()+'</div>'
  +'<div class="blk" id="about"><div class="blt">About ManassaMai</div><p><b>ManassaMai 🌸 มนัสสมัย</b></p><p style="margin-top:4px"><i>Life is a Gift. Let Life Flourish in Harmony.</i></p><p style="margin-top:8px">พื้นที่เรียนรู้เพื่อเข้าใจร่างกาย จิตใจ และธรรมชาติของตัวเอง พร้อมเรียนรู้ที่จะหล่อเลี้ยงชีวิตให้เติบโต เบ่งบาน และดำเนินไปอย่างสอดคล้องกับสิ่งที่เราเป็น ด้วยภูมิปัญญาธรรมชาติ</p><p style="margin-top:8px">เพราะชีวิตไม่ได้มีเพียงการเติบโตเพื่อไปให้ถึงจุดหมาย แต่ยังเป็นการเรียนรู้ที่จะอยู่กับตัวเอง ดูแลชีวิต และเติบโตอย่างสมดุลและมีความหมายในทุกช่วงเวลาของการเดินทาง</p></div>'
  +connectHtml()
  +'<div class="blk"><div class="blt">Contact</div>'+list+'</div><div class="credits"><p class="cr-t">Organizations &amp; Partners</p><p class="cr-th">องค์กรและหน่วยงานที่เคยร่วมงาน</p><img src="'+CREDITS+'" alt="โลโกองค์กรและหน่วยงานที่ ManassaMai เคยร่วมงานด้วย" loading="lazy"><p class="cr-n">เครื่องหมายและโลโกเป็นของเจ้าของแต่ละองค์กร แสดงไว้เพื่ออ้างอิงประวัติการร่วมงานเท่านั้น</p></div><div class="row-btn"><button class="btn ghost" id="bk">กลับไปเลือกชุด</button></div><p class="mute center" style="margin-top:22px"><b>ManassaMai</b><span class="brand-sub">Self care and Holistic Healing workshop</span></p>'+QUOTE;
@@ -1203,6 +1229,7 @@ function contact(anchor){
  for(k=0;k<cs.length;k++)cs[k].onclick=function(){copyTxt(this,rows[+this.getAttribute("data-k")][1])};
  var sv=app.querySelectorAll(".card[data-sv]");
  for(k=0;k<sv.length;k++)sv[k].onclick=function(){svcPage(this.getAttribute("data-sv"))};
+ document.getElementById("shopCard").onclick=shopPage;
  var gs=app.querySelectorAll(".chip[data-go]");
  for(k=0;k<gs.length;k++)gs[k].onclick=function(){smoothTo(this.getAttribute("data-go"))};
  document.getElementById("bk").onclick=home;
@@ -1955,8 +1982,8 @@ function result(){
  window.scrollTo(0,0);
 }
 
-(function(){var p="",c="";try{var u=new URLSearchParams(location.search);p=u.get("set")||"";c=u.get("cat")||""}catch(e){}
-for(var k=0;k<SETS.length;k++){if(SETS[k].id===p){idx=k;S=SETS[k];ans=[];ord=[];i=0;ask();return}}
+(function(){var p="",c="",go="";try{var u=new URLSearchParams(location.search);p=u.get("set")||"";c=u.get("cat")||"";go=u.get("go")||""}catch(e){}
+for(var k=0;k<SETS.length;k++){if(SETS[k].id===p){idx=k;S=SETS[k];ans=[];ord=[];i=0;ask();if(p==="contact"&&go==="shop"&&typeof shopPage==="function")shopPage();return}}
 for(var g=0;g<GROUPS.length;g++){if(GROUPS[g].id===c&&GROUPS[g].ids.length){showCat(g);return}}
 showHome()})();
 </script>
