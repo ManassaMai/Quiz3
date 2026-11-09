@@ -154,9 +154,14 @@ ul{padding-left:20px;margin:0 0 14px}li{margin-bottom:8px}
 .acc-t i{display:block;font-size:.88rem;color:var(--accent);margin:1px 0 3px}
 .acc-t .mute{display:block;line-height:1.55}
 .acc-c{flex:none;color:var(--accent);font-size:1.1rem;line-height:1.5;transition:transform .35s ease}
-.acc.open .acc-c{transform:rotate(180deg)}
+.acc.open>.acc-h .acc-c{transform:rotate(180deg)}
+.acc.top>.acc-h .acc-c{font-family:"Mali",sans-serif;font-size:1.5rem;font-weight:600;transform:none;min-width:1.2ch;text-align:center}
+.acc.top>.acc-h .acc-c::before{content:"+"}
+.acc.top.open>.acc-h .acc-c::before{content:"\2212"}
+.acc.top .acc-b{padding-left:4px}
+.acc.top .acc-b .acc-b{padding-left:36px}
 .acc-p{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .38s ease,visibility 0s .38s}
-.acc.open .acc-p{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.acc.open>.acc-p{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
 .acc-p>div{overflow:hidden;min-height:0}
 .acc-b{padding:0 4px 18px 36px}
 .acc-b p{margin:0 0 10px}
@@ -2015,7 +2020,7 @@ personal:{e:"🌿",t:"Personal Services",th:"บริการสำหรั�
  ]},
 corporate:{e:"🌳",t:"Corporate & Organization",th:"บริการสำหรับองค์กร",cta:"ดูบริการสำหรับองค์กร",
  intro:"ออกแบบประสบการณ์การเรียนรู้และกิจกรรม Well-being เพื่อส่งเสริมสุขภาวะกายใจ ลดความเครียด และสร้างสมดุลในการทำงาน ผ่านความเข้าใจร่างกาย ภูมิปัญญาธรรมชาติ และการดูแลตัวเองแบบองค์รวม",
- hint:"แตะที่ Workshop เพื่อดูกิจกรรมที่เลือกผสมผสานได้",
+ hint:"แตะที่หัวข้อเพื่ออ่านรายละเอียด เปิดอ่านพร้อมกันทั้งสองหัวข้อได้",
  items:[
  {n:"01",t:"RELAX & RESET",sub:"Stress Relief & Sensory Relaxation",s:"เรียนรู้การผ่อนคลายความเครียดผ่านประสบการณ์ทางประสาทสัมผัส",
   acts:["Aromatherapy & Essential Oil Experience","Flower Oil Experience","Flower Tea & Mindful Tea Time","Creative Art Activities","Gentle Self-Massage","Self-Hug Practice"],
@@ -2034,6 +2039,22 @@ corporate:{e:"🌳",t:"Corporate & Organization",th:"บริการสำห
   d2:"ปรับเนื้อหา รูปแบบ ระยะเวลา และจำนวนผู้เข้าร่วมได้ตามความเหมาะสม",custom:1}
  ]}
 };
+var SPK={
+ d:"บริการวิทยากร ถ่ายทอดองค์ความรู้ และจัดการเรียนการสอนด้าน Self-Care และ Holistic Well-being สำหรับองค์กร สถาบัน และกลุ่มผู้เรียน",
+ cats:[
+ {t:"BODY WISDOM & SOMATIC AWARENESS",l:[["The Wisdom of Your Body","ปัญญาของร่างกายที่เราอาจหลงลืม"],["Listen to Your Body","เรียนรู้ภาษาของร่างกาย"],["Stress & Nervous System Care","เข้าใจความเครียดและการดูแลระบบประสาท"]]},
+ {t:"HOLISTIC SELF-CARE",l:[["The Art of Holistic Self-Care","ศิลปะการดูแลตัวเองแบบองค์รวม"],["Nourish Your Energy","เรียนรู้การหล่อเลี้ยงพลังชีวิต"],["Everyday Self-Care Rituals","สร้างวิถีการดูแลตัวเองในชีวิตประจำวัน"]]},
+ {t:"NATURE & TRADITIONAL WISDOM",l:[["Living in Harmony with Nature","ใช้ชีวิตอย่างสอดคล้องกับธรรมชาติ"],["Understanding Yourself Through Five Elements","เข้าใจตัวเองผ่านธาตุทั้งห้า"]]},
+ {t:"FEMININE WISDOM",l:[["Understanding Women's Body","เข้าใจธรรมชาติของร่างกายผู้หญิง"],["Menstrual Cycle & Self-Care","เรียนรู้วัฏจักรและการดูแลตัวเอง"]]},
+ {t:"WORK-LIFE HARMONY",l:[["Sustainable Self-Care","การดูแลตัวเองอย่างยั่งยืน"],["Understanding Your Needs & Boundaries","เข้าใจความต้องการและขอบเขตของตัวเอง"]]}
+ ],
+ note:"หัวข้อเหล่านี้เป็นตัวอย่างองค์ความรู้ที่สามารถนำไปถ่ายทอดได้ โดยสามารถเลือกหัวข้อหรือร่วมออกแบบเนื้อหาให้เหมาะกับเป้าหมาย กลุ่มผู้ฟัง และบริบทของแต่ละองค์กร"
+};
+function corpBody(sub){
+ if(sub==="speak")return '<div class="acc-b" style="padding:14px 4px 18px"><p>'+esc(SPK.d)+'</p>'+SPK.cats.map(function(c){return '<div class="lb" style="margin-top:12px">'+esc(c.t)+'</div><ul>'+c.l.map(function(x){return '<li><b>'+esc(x[0])+'</b> — '+esc(x[1])+'</li>'}).join("")+'</ul>'}).join("")+'<p class="mute">'+esc(SPK.note)+'</p><div class="row-btn" style="justify-content:flex-start;margin-top:6px"><a class="btn" href="'+mailTo("สนใจเชิญมะไหมเป็นวิทยากร")+'" style="display:inline-block;text-decoration:none">INVITE AS A SPEAKER</a></div></div>';
+ return '<p class="mute" style="margin:12px 4px 0">แตะที่ Workshop เพื่อดูกิจกรรมที่เลือกผสมผสานได้</p><div id="svled">'+SVC.corporate.items.map(function(it){return svcAccHtml(it,"corporate")}).join("")+'</div>';
+}
+var CORP=[["speak","01","SPEAKING &amp; EDUCATION","วิทยากร งานสอน และงานบรรยาย","🎤"],["led","02","LEARNING EXPERIENCE DESIGN","ออกแบบกระบวนการเรียนรู้","🌿"]];
 var SVC_OPEN=-1;
 function svcAccHtml(it,kind){
  var body="";
@@ -2076,14 +2097,23 @@ document.addEventListener("click",function(e){
 function connectHtml(){
  return '<div class="blk" id="connect" style="margin-top:26px"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div><div class="blt">LET\'S CONNECT 💛</div><p>ไม่ว่าคุณกำลังมองหาพื้นที่เพื่อเรียนรู้และดูแลตัวเอง หรือกำลังมองหากิจกรรม Well-being สำหรับองค์กร มะไหมยินดีพูดคุยและร่วมออกแบบประสบการณ์ที่เหมาะกับความต้องการของคุณค่ะ</p><p style="margin-top:8px"><b>สนใจบริการหรือต้องการสอบถามรายละเอียดเพิ่มเติม ติดต่อมะไหมได้เลยนะคะ</b></p></div></div><div class="row-btn"><a class="btn" href="'+CLINE+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">CONTACT ME</a><button class="btn ghost" id="wtBtn" type="button" aria-expanded="false" aria-controls="wtPanel">LET\'S WORK TOGETHER</button></div><div class="mailpanel" id="wtPanel" hidden><p class="mp-l">อีเมลของมะไหม</p><div class="mp-row"><span class="mp-a" id="wtMail">'+CMAIL+'</span><button class="btn" id="wtCopy" type="button">คัดลอกอีเมล</button></div><a class="mp-o" href="'+mailTo("สนใจร่วมงานกับ ManassaMai")+'">หรือเปิดแอปอีเมลเพื่อเขียนถึงมะไหม</a><p class="mp-s" id="wtMsg" role="status" aria-live="polite"></p></div><p class="mute center" style="margin-top:8px">CONTACT ME ไปที่ LINE OA · LET\'S WORK TOGETHER คัดลอกอีเมลถึงมะไหม</p></div>';
 }
-function svcPage(kind){
- var V=SVC[kind],other=kind==="personal"?"corporate":"personal";
- app.innerHTML='<div class="mute">'+S.ic+' Contact me &amp; Services</div><div class="center" style="margin-top:6px"><div class="big" aria-hidden="true">'+V.e+'</div><p class="sv-eyebrow">Services</p><h2>'+V.t+'</h2><p><b>'+V.th+'</b></p><p>'+V.intro+'</p></div><p class="mute center">'+V.hint+' · ดูทีละหัวข้อ ไม่ต้องรีบอ่านทั้งหมดนะคะ</p><div class="svbox" id="svlist">'+V.items.map(function(it){return svcAccHtml(it,kind)}).join("")+'</div>'
+function svcPage(kind,sub){
+ var V=SVC[kind],other=kind==="personal"?"corporate":"personal",corp=kind==="corporate",body;
+ if(corp&&!sub){
+  body='<div class="cards" style="margin:16px 0">'+CORP.map(function(c){return '<button class="card" data-cs="'+c[0]+'"><span class="ic" aria-hidden="true">'+c[4]+'</span><span><b>'+c[1]+' · '+c[2]+'</b><span class="mute">'+c[3]+'</span><span class="tag">ดูรายละเอียด →</span></span></button>'}).join("")+'</div>';
+ }else if(corp){
+  body='<div class="chips" role="tablist" style="margin-top:14px">'+CORP.map(function(c){return '<button class="chip'+(c[0]===sub?' on':'')+'" role="tab" aria-selected="'+(c[0]===sub)+'" data-cs="'+c[0]+'">'+c[2]+'</button>'}).join("")+'</div><div class="svbox" style="margin-top:4px;padding:4px 14px">'+corpBody(sub)+'</div>';
+ }else body='<div class="svbox" id="svlist">'+V.items.map(function(it){return svcAccHtml(it,kind)}).join("")+'</div>';
+ app.innerHTML='<div class="mute">'+S.ic+' Contact me &amp; Services</div><div class="center" style="margin-top:6px"><div class="big" aria-hidden="true">'+V.e+'</div><p class="sv-eyebrow">Services</p><h2>'+V.t+'</h2><p><b>'+V.th+'</b></p><p>'+V.intro+'</p></div><p class="mute center">'+(corp?'เลือกดูทีละบริการได้เลยนะคะ และสลับดูอีกบริการได้ตลอด':V.hint+' · ดูทีละหัวข้อ ไม่ต้องรีบอ่านทั้งหมดนะคะ')+'</p>'+body
  +connectHtml()
- +'<div class="row-btn"><button class="btn ghost" id="sw">ดู'+SVC[other].th+'</button><button class="btn ghost" id="bs">กลับ Contact me &amp; Services</button></div>'
+ +'<div class="row-btn">'+(corp&&sub?'<button class="btn ghost" id="ov">กลับไปหัวข้อบริการองค์กร</button>':'')+'<button class="btn ghost" id="sw">ดู'+SVC[other].th+'</button><button class="btn ghost" id="bs">กลับ Contact me &amp; Services</button></div>'
  +'<p class="mute note">กิจกรรมทั้งหมดออกแบบเพื่อการเรียนรู้และการดูแลตัวเอง ไม่ใช่การรักษาโรคหรือการวินิจฉัย หากมีอาการทางกายที่ต่อเนื่อง รุนแรง หรือผิดปกติ ควรปรึกษาบุคลากรทางการแพทย์</p>'
  +'<p class="mute center" style="margin-top:22px"><b>ManassaMai 🌸</b><span class="brand-sub">Life is a Gift. Let Life Flourish in Harmony.</span></p>';
- bindAcc(document.getElementById("svlist"));
+ var cs=app.querySelectorAll("[data-cs]"),q;
+ for(q=0;q<cs.length;q++)cs[q].onclick=function(){svcPage("corporate",this.getAttribute("data-cs"))};
+ if(corp&&sub==="led")bindAcc(document.getElementById("svled"));
+ if(!corp)bindAcc(document.getElementById("svlist"));
+ var ov=document.getElementById("ov");if(ov)ov.onclick=function(){svcPage("corporate")};
  document.getElementById("sw").onclick=function(){svcPage(other)};
  document.getElementById("bs").onclick=function(){contact("svc")};
  window.scrollTo(0,0);
@@ -2091,6 +2121,12 @@ function svcPage(kind){
 document.addEventListener("click",function(e){
  var t=e.target.closest?e.target.closest(".shopcp"):null;if(!t)return;
  var url=baseUrl()+"?set=contact&go=shop",m=t.parentNode.querySelector(".shopcp-m");
+ var lab=t.getAttribute("data-l")||t.textContent;t.setAttribute("data-l",lab);
+ copyText(url,function(){t.textContent="คัดลอกลิงก์แล้ว ✓";if(m)m.textContent="";setTimeout(function(){t.textContent=lab},2200)},function(){if(m)m.textContent=url});
+});
+document.addEventListener("click",function(e){
+ var t=e.target.closest?e.target.closest(".svccp"):null;if(!t)return;
+ var url=baseUrl()+"?set=contact&go=svc",m=t.parentNode.querySelector(".shopcp-m");
  var lab=t.getAttribute("data-l")||t.textContent;t.setAttribute("data-l",lab);
  copyText(url,function(){t.textContent="คัดลอกลิงก์แล้ว ✓";if(m)m.textContent="";setTimeout(function(){t.textContent=lab},2200)},function(){if(m)m.textContent=url});
 });
@@ -2125,7 +2161,7 @@ function contact(anchor){
  }).join("");
  var svcCards=["personal","corporate"].map(function(k){var V=SVC[k];return '<button class="card" data-sv="'+k+'"><span class="ic" aria-hidden="true">'+V.e+'</span><span><b>'+V.t+'</b><span class="mute">'+V.th+'</span><span class="tag">'+(k==="personal"?"EXPLORE PERSONAL SERVICES":"CORPORATE &amp; ORGANIZATION")+' →</span></span></button>'}).join("");
  app.innerHTML='<div class="mute">'+S.ic+' Contact me &amp; Services</div><div class="chips nav"><button class="chip" data-go="svc">บริการ</button><button class="chip" data-go="shop">Shop</button><button class="chip" data-go="podcast">Podcast</button><button class="chip" data-go="about">เกี่ยวกับมะไหม</button><button class="chip" data-go="connect">ติดต่อ</button></div><img class="pic" src="'+PIC+'" alt="ผู้ก่อตั้ง ManassaMai"><div class="center"><h2>มะไหม</h2><p><b>มนัสวี ศุระศรางค์</b></p><h2 class="role">Nature-Based Healing &amp; Body Wisdom Facilitator</h2><p>นักบำบัดแนวธรรมชาติบำบัด ผู้เชื่อมโยงพลังของสมดุลธาตุ พลังของธรรมชาติ และดอกไม้ในการดูแลผู้คน</p></div><div class="blk"><div class="blt">สำเร็จการศึกษา</div><p>กายภาพบำบัด แพทย์แผนไทย จิตตปัญญาศึกษา (กระบวนกร) และศาสตร์บำบัดต่าง ๆ</p></div>'
- +'<div class="sec" id="svc"><p class="sv-eyebrow">Services</p><h2>บริการของมะไหม</h2><p class="mute sd">เลือกดูตามที่เหมาะกับคุณได้เลยนะคะ แตะแล้วจะเห็นรายละเอียดทีละหัวข้อ ไม่ต้องอ่านทั้งหมดในครั้งเดียว</p><div class="cards" style="margin:14px 0 0">'+svcCards+'</div></div>'
+ +'<div class="sec" id="svc"><p class="sv-eyebrow">Services</p><h2>บริการของมะไหม</h2><p class="mute sd">เลือกดูตามที่เหมาะกับคุณได้เลยนะคะ แตะแล้วจะเห็นรายละเอียดทีละหัวข้อ ไม่ต้องอ่านทั้งหมดในครั้งเดียว</p><div class="cards" style="margin:14px 0 0">'+svcCards+'</div><div class="shopcp-w"><button class="btn ghost svccp" type="button">🔗 คัดลอกลิงก์ Services</button><p class="mute shopcp-m" role="status" aria-live="polite"></p></div></div>'
  +'<div class="sec" id="shop"><p class="sv-eyebrow">Shop</p><h2>Self-care Products &amp; Tools</h2><p class="mute sd">ของเล็ก ๆ ที่ช่วยให้เราดูแลตัวเองได้ใกล้ชิดขึ้นในทุกวัน</p><div class="cards" style="margin:14px 0 0"><button class="card" id="shopCard"><span class="ic" aria-hidden="true">🛍️</span><span><b>Shop</b><span class="mute">ผลิตภัณฑ์และเครื่องมือดูแลตัวเอง</span><span class="tag">COMING SOON →</span></span></button></div>'+shopCpHtml()+'</div>'
  +'<div class="sec" id="podcast"><p class="sv-eyebrow">Podcast</p><h2>Podcast on Spotify</h2><p class="mute sd">ฟังมะไหมเล่าเรื่องการดูแลกาย ใจ และชีวิตอย่างอ่อนโยน ระหว่างเดินทาง พักผ่อน หรือในช่วงเวลาเงียบ ๆ ของคุณ</p><div class="row-btn" style="justify-content:flex-start;margin-top:12px"><a class="btn" href="https://open.spotify.com/show/0UXWZny4DEkM76gLSj1F5m" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">🎧 ฟังบน Spotify</a><button class="btn ghost" id="podCp">คัดลอกลิงก์ Podcast</button></div></div>'
  +'<div class="blk" id="about"><div class="blt">About ManassaMai</div><p><b>ManassaMai 🌸 มนัสสมัย</b></p><p style="margin-top:4px"><i>Life is a Gift. Let Life Flourish in Harmony.</i></p><p style="margin-top:8px">พื้นที่เรียนรู้เพื่อเข้าใจร่างกาย จิตใจ และธรรมชาติของตัวเอง พร้อมเรียนรู้ที่จะหล่อเลี้ยงชีวิตให้เติบโต เบ่งบาน และดำเนินไปอย่างสอดคล้องกับสิ่งที่เราเป็น ด้วยภูมิปัญญาธรรมชาติ</p><p style="margin-top:8px">เพราะชีวิตไม่ได้มีเพียงการเติบโตเพื่อไปให้ถึงจุดหมาย แต่ยังเป็นการเรียนรู้ที่จะอยู่กับตัวเอง ดูแลชีวิต เติบโตอย่างสมดุลและมีความหมายในทุกช่วงเวลาของการเดินทาง</p></div>'
@@ -3239,6 +3275,18 @@ function rdrAuto(){
 }
 try{new MutationObserver(rdrAuto).observe(app,{childList:true})}catch(e){}
 
+var FBIDS=["bys", "flower", "seasons", "recharge", "self", "growth", "rooted", "flow", "hidden", "world"];
+function fbAuto(){
+ if(!app||!S||!S.id||FBIDS.indexOf(S.id)<0||app.querySelector("#fbCard"))return;
+ var sv=app.querySelector("#sv")||app.querySelector("#share");if(!sv)return;
+ var row=sv.closest(".row-btn");if(!row)return;
+ var h=document.createElement("div");
+ h.innerHTML='<div class="blk" id="fbCard"><div class="blt">แบ่งปันความรู้สึกกับมะไหม 💌</div><p>หลังเล่นแล้วรู้สึกอย่างไรบ้าง เล่าให้มะไหมฟังได้เลย ทั้งสิ่งที่ได้เรียนรู้ ความรู้สึกหลังเล่น หรือกำลังใจที่อยากส่งมาให้กัน ทุกข้อความช่วยให้มะไหมพัฒนากิจกรรมและออกควิซแบบใหม่ ๆ ค่ะ</p><div class="row-btn" style="justify-content:flex-start"><a class="btn" href="https://forms.gle/kk4Js7ochcb29dJz5" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">เล่าให้มะไหมฟัง</a><button class="btn ghost" id="fbCardP">ดูหน้าแบ่งปันการเรียนรู้</button></div></div>';
+ var el=h.firstChild;row.parentNode.insertBefore(el,row);
+ document.getElementById("fbCardP").onclick=function(){var k=idxOf("feedback");if(k<0)k=SETS.length-2;idx=k;S=SETS[k];feedbackPage()};
+}
+try{new MutationObserver(fbAuto).observe(app,{childList:true})}catch(e){}
+
 function ijHead(sub,ch){ch=ch||"01";
  return '<div class="mute" style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-bottom:6px">THE INNER JOURNEY · A 4-Chapter Self-Discovery Adventure by ManassaMai<br><b>Chapter '+ch+' of 04</b>'+(sub?' · '+sub:'')+'</div>';
 }
@@ -3991,7 +4039,7 @@ function result(){
 }
 
 (function(){var p="",c="",go="";try{var u=new URLSearchParams(location.search);p=u.get("set")||"";c=u.get("cat")||"";go=u.get("go")||""}catch(e){}
-for(var k=0;k<SETS.length;k++){if(SETS[k].id===p){idx=k;S=SETS[k];ans=[];ord=[];i=0;ask();if(p==="contact"&&go==="shop"&&typeof shopPage==="function")shopPage();return}}
+for(var k=0;k<SETS.length;k++){if(SETS[k].id===p){idx=k;S=SETS[k];ans=[];ord=[];i=0;ask();if(p==="contact"&&go==="shop"&&typeof shopPage==="function")shopPage();if(p==="contact"&&go==="svc")contact("svc");return}}
 for(var g=0;g<GROUPS.length;g++){if(GROUPS[g].id===c&&GROUPS[g].ids.length){showCat(g);return}}
 showHome()})();
 </script>
