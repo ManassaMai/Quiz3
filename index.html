@@ -281,6 +281,17 @@ body.wmon main{padding-top:104px}
 @media (prefers-color-scheme:dark){
 :root:not([data-theme="light"]) .hero2.dk{background:none;box-shadow:none;padding:0;border-radius:0;-webkit-mask-image:radial-gradient(ellipse 72% 70% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 70% at 50% 50%,#000 62%,transparent 100%)}
 :root:not([data-theme="light"]) .fair.dk{background:none;box-shadow:none;padding:0;border-radius:0;filter:drop-shadow(0 0 10px rgba(255,240,250,.12))}}
+
+/* envelope butterflies: stay in place, only flap slowly */
+.eb{animation:none}
+.eb.e1{transform:translate(-86px,-62px) rotate(-14deg)}
+.eb.e2{transform:translate(82px,-88px) rotate(12deg)}
+.eb.e3{transform:translate(-66px,40px) rotate(-8deg)}
+.eb img{animation:flap3 .45s ease-in-out infinite alternate}
+.eb.e2 img{animation-duration:.52s;animation-delay:-.2s}
+.eb.e3 img{animation-duration:.4s;animation-delay:-.3s}
+@keyframes flap3{from{transform:scaleX(1)}to{transform:scaleX(.4)}}
+@media (prefers-reduced-motion:reduce){.eb img{animation:none}}
 </style>
 </head>
 <body>
