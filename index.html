@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <title>ManassaMai | Let Life Flourish Quiz</title>
 <meta name="description" content="คำถามอบอุ่นที่ชวนคุณกลับมาดูแลตัวเอง และเบ่งบานตามช่วงเวลาของชีวิต | ManassaMai">
 <meta property="og:type" content="website">
@@ -346,7 +347,7 @@ body.wmon main{padding-top:104px}
 .bic-cloud{position:absolute;left:0;width:64px;height:20px;border-radius:20px;background:rgba(255,255,255,.55);box-shadow:16px -8px 0 -2px rgba(255,255,255,.55),34px 0 0 -3px rgba(255,255,255,.5);animation:bicCloud linear infinite}
 .bic-cloud.c2{width:48px;height:16px;opacity:.8}
 .bic-sp{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff3b0;box-shadow:0 0 6px 2px rgba(255,240,170,.7);opacity:0;animation:bicTw 6s ease-in-out infinite}
-.sea-winter .bic-sp{background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.7)}
+.sea-winter .bic-sp{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23ffffff' fill-opacity='.28'/%3E%3Ccircle cx='10' cy='10' r='6.5' fill='%23ffffff'/%3E%3C/svg%3E") center/100% 100% no-repeat;box-shadow:none;width:10px;height:10px}
 .bic-leaf{position:absolute;top:-10px;width:10px;height:7px;border-radius:70% 0 70% 0;background:#d88a3b;opacity:0;animation:bicLeaf linear infinite}
 .bic-fly{position:absolute;left:0;opacity:.95;animation:bicFlyX linear infinite}
 .bic-fly.bf svg{animation:bicWob 3.2s ease-in-out infinite alternate}
@@ -443,7 +444,8 @@ body.bicmw{overflow-x:hidden}
 .bic-pp{position:absolute;top:-6%;width:var(--sz);height:calc(var(--sz)*.7);opacity:0;animation:bicPf linear infinite;will-change:transform,top}
 .pp-spring{border-radius:60% 40% 60% 40%;background:#ffd3e0;box-shadow:0 0 3px rgba(255,255,255,.7)}
 .pp-autumn{border-radius:70% 0 70% 0;background:#d9823a}.pp-autumn[style*="--cl:1"]{background:#c4562b}.pp-autumn[style*="--cl:2"]{background:#e8b04a}
-.pp-winter{border-radius:50%;background:#fff;height:var(--sz);box-shadow:0 0 4px rgba(255,255,255,.9)}
+/* snow is a picture, not a CSS colour, so a phone's auto dark mode cannot turn it black */
+.pp-winter{border-radius:50%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%23ffffff' fill-opacity='.28'/%3E%3Ccircle cx='10' cy='10' r='6.5' fill='%23ffffff'/%3E%3C/svg%3E") center/100% 100% no-repeat;height:var(--sz);width:calc(var(--sz)*1.7);height:calc(var(--sz)*1.7);margin:calc(var(--sz)*-.35) 0 0 calc(var(--sz)*-.35)}
 .bic-pfx .bic-sp{position:absolute}
 .bic-scene.still .bic-glow,.bic-scene.still .bic-pc,.bic-scene.still .bic-wind{animation:none}
 .bic-scene.still .bic-pp{display:none}
@@ -637,6 +639,11 @@ body.bicmw{overflow-x:hidden}
 .nw{position:absolute;top:-11px;right:12px;width:52px;height:auto;transform:rotate(7deg);pointer-events:none;filter:drop-shadow(0 3px 5px rgba(176,72,106,.28));animation:nwb 3.2s ease-in-out infinite;transform-origin:50% 60%}
 @keyframes nwb{0%,100%{transform:rotate(7deg) scale(1)}50%{transform:rotate(4deg) scale(1.07)}}
 @media (prefers-reduced-motion:reduce){.nw{animation:none}}
+.lvh{margin:26px 0 4px;text-align:left;scroll-margin-top:16px}
+.lvh b{display:block;font-size:1.02rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--accent)}
+.lvh span{display:block;margin-top:2px;font-size:.84rem;line-height:1.55;color:var(--mute)}
+.lvint{text-align:center;font-size:.88rem;margin:14px 0 4px}
+.lvchips{justify-content:center;margin:8px 0 0}
 </style>
 </head>
 <body>
@@ -3021,8 +3028,7 @@ function bicSnapView(){
   var m=document.getElementById("snMsg");draw();
   try{cv.toBlob(function(b){
    if(!b){m.textContent="เบราว์เซอร์นี้บันทึกภาพไม่ได้ ลองใช้ Chrome หรือ Safari รุ่นใหม่นะคะ";return}
-   var a=document.createElement("a"),u=URL.createObjectURL(b);a.href=u;a.download="my-garden-"+S.iso+".png";document.body.appendChild(a);a.click();
-   setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u)},1500);m.textContent="บันทึกภาพลงเครื่องแล้วค่ะ ✓"},"image/png")}
+   saveImg(b,"my-garden-"+S.iso+".png",function(s){m.textContent=s==="ok"||s==="share"?"บันทึกภาพลงเครื่องแล้วค่ะ ✓":s==="sheet"?"กดค้างที่รูปแล้วเลือก “บันทึกรูปภาพ” ได้เลยค่ะ":""},true)},"image/png")}
   catch(e){m.textContent="เบราว์เซอร์นี้บันทึกภาพไม่ได้ ลองใช้ Chrome หรือ Safari รุ่นใหม่นะคะ"}
  });
  window.scrollTo(0,0);
@@ -3099,8 +3105,7 @@ function bicRead(id,back,mode){
   bicEntryCard(e,function(cv){b.disabled=false;b.textContent=o;
    if(!cv){m.textContent="เบราว์เซอร์นี้สร้างภาพไม่ได้ ลองใช้ Chrome หรือ Safari รุ่นใหม่นะคะ";return}
    try{cv.toBlob(function(bl){if(!bl){m.textContent="เบราว์เซอร์นี้บันทึกภาพไม่ได้ ลองใช้ Chrome หรือ Safari รุ่นใหม่นะคะ";return}
-    var a=document.createElement("a"),u=URL.createObjectURL(bl);a.href=u;a.download="my-flower-"+String(e.createdAt).slice(0,10)+".png";document.body.appendChild(a);a.click();
-    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u)},1500);m.style.color="var(--mute)";m.textContent="บันทึกภาพลงเครื่องแล้วค่ะ ✓ ภาพนี้มีบันทึกส่วนตัวของเธอ เก็บไว้เองนะคะ"},"image/png")}
+    saveImg(bl,"my-flower-"+String(e.createdAt).slice(0,10)+".png",function(s){m.style.color="var(--mute)";m.textContent=s==="ok"||s==="share"?"บันทึกภาพลงเครื่องแล้วค่ะ ✓ ภาพนี้มีบันทึกส่วนตัวของเธอ เก็บไว้เองนะคะ":s==="sheet"?"กดค้างที่รูปแล้วเลือก “บันทึกรูปภาพ” ได้เลยค่ะ ภาพนี้มีบันทึกส่วนตัว เก็บไว้เองนะคะ":""},true)},"image/png")}
    catch(x){m.textContent="เบราว์เซอร์นี้บันทึกภาพไม่ได้ ลองใช้ Chrome หรือ Safari รุ่นใหม่นะคะ"}})});
  bicOn("rEdit",function(){bicRead(id,back,"edit")});bicOn("rCancel",function(){bicRead(id,back)});
  bicOn("rDel",function(){bicRead(id,back,"del")});bicOn("rDelNo",function(){bicRead(id,back)});
@@ -3228,11 +3233,20 @@ var GROUPS=[
 {id:"contribute",e:"🌾",t:"Contribute · โปรยเมล็ดพันธุ์",d:"นำสิ่งที่เราเป็น สิ่งที่เรารัก และสิ่งที่เราทำได้ มาสร้างสรรค์และส่งต่อสิ่งดีงามให้ผู้คนและโลกในแบบของเราเอง",ids:["luck","world","hidden"]},
 {id:"reflect",e:"🌼",t:"Self care Practice · พื้นที่รู้จักตัวเอง",d:"พื้นที่รู้จักตัวเอง สะท้อนตัวเอง และโอบกอดตัวเอง ที่คุณกลับมาได้ทุกวัน",ids:["bic"]}
 ];
+/* depth levels: each category page lists its quizzes Easy -> Medium -> Deep Reflection so people can pick the weight of the day */
+var LEVELS=[
+{k:"easy",e:"🌼",t:"Easy",d:"เริ่มต้นเบา ๆ · ข้อสั้น ตอบสนุก ใช้เวลาไม่นาน เหมาะกับวันที่อยากเริ่มอย่างอ่อนโยน"},
+{k:"medium",e:"🌿",t:"Medium",d:"สำรวจใจให้ลึกขึ้น · เริ่มมองรูปแบบชีวิตและสิ่งที่ตัวเองต้องการ ใช้เวลาคิดมากขึ้นอีกนิด"},
+{k:"deep",e:"🌳",t:"Deep Reflection",d:"พื้นที่สะท้อนใจอย่างลึกซึ้ง · ชวนหยุดนิ่ง เขียน และคุยกับตัวเองอย่างเมตตา เหมาะกับวันที่มีเวลาและใจพร้อม"}];
+var LVOF={flower:0,spark:0,peace:0,recharge:0,body:0,seasons:0,luck:0,
+ selfcare:1,rooted:1,roots:1,flow:1,growth:1,hidden:1,bys:1,boundary:1,self:1,
+ inner:2,patterns:2,bodywis:2,soulaligned:2,world:2,bic:2};
+function lvName(id){var l=LVOF[id];return l==null?"":LEVELS[l].t}
 var TAIL=["feedback","contact"];
 var NEWB="data:image/webp;base64,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";
 function cardHtml(k){
   var s=SETS[k];
-  return '<div class="cw"><button class="card'+(done[k]!=null?' dn':'')+'" data-k="'+k+'">'+(done[k]==null&&!s.feedback&&!s.contact?'<img class="nw" alt="ใหม่ ยังไม่เคยเล่น" src="'+NEWB+'">':'')+'<span class="ic" aria-hidden="true">'+s.ic+'</span><span><b>'+s.title+'</b><span class="mute">'+s.desc+'</span><span class="tag">'+(s.qs?s.qs.length+' ข้อ':(s.tag||''))+(done[k]!=null?' · ✓ ทำแล้ว '+String(done[k]).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]}):'')+'</span></span></button><button class="cp lk" data-k="'+k+'">คัดลอกลิงค์ชุดนี้</button></div>';
+  return '<div class="cw"><button class="card'+(done[k]!=null?' dn':'')+'" data-k="'+k+'">'+(done[k]==null&&!s.feedback&&!s.contact?'<img class="nw" alt="ใหม่ ยังไม่เคยเล่น" src="'+NEWB+'">':'')+'<span class="ic" aria-hidden="true">'+s.ic+'</span><span><b>'+s.title+'</b><span class="mute">'+s.desc+'</span><span class="tag">'+(lvName(s.id)?lvName(s.id)+' · ':'')+(s.qs?s.qs.length+' ข้อ':(s.tag||''))+(done[k]!=null?' · ✓ ทำแล้ว '+String(done[k]).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]}):'')+'</span></span></button><button class="cp lk" data-k="'+k+'">คัดลอกลิงค์ชุดนี้</button></div>';
 }
 function idxOf(id){for(var q=0;q<SETS.length;q++)if(SETS[q].id===id)return q;return -1}
 function catOfSet(id){for(var g=0;g<GROUPS.length;g++)if(GROUPS[g].ids.indexOf(id)>=0)return g;return -1}
@@ -3246,10 +3260,18 @@ function bindSetButtons(){
 function home(){var g=S?catOfSet(S.id):-1;if(g>=0)showCat(g);else showHome()}
 function showCat(g){
  S=null;
- var G=GROUPS[g],body="";
- G.ids.forEach(function(id){var q=idxOf(id);if(q>=0)body+=cardHtml(q)});
- app.innerHTML='<div class="center" style="margin-top:6px"><div class="big" aria-hidden="true">'+G.e+'</div><h2>'+G.t+'</h2><p class="mute">'+G.d+'</p></div><div class="cards" style="margin:20px 0">'+body+'</div><div class="row-btn"><button class="btn ghost" id="bk">กลับหน้าแรก</button></div>';
+ var G=GROUPS[g],body="",chips="",by=[[],[],[]],oth="",c=0;
+ G.ids.forEach(function(id){var q=idxOf(id);if(q<0)return;var l=LVOF[id];if(l==null)oth+=cardHtml(q);else by[l].push(q)});
+ LEVELS.forEach(function(L,li){var a=by[li];if(!a.length)return;c++;
+  chips+='<button type="button" class="chip" data-lv="'+li+'">'+L.e+' '+L.t+' ('+a.length+')</button>';
+  body+='<div class="lvh" id="lv'+li+'" role="heading" aria-level="3"><b>'+L.e+' '+L.t+'</b><span>'+L.d+'</span></div><div class="cards" style="margin:10px 0 6px">'+a.map(cardHtml).join("")+'</div>'});
+ if(oth)body+='<div class="cards" style="margin:14px 0">'+oth+'</div>';
+ app.innerHTML='<div class="center" style="margin-top:6px"><div class="big" aria-hidden="true">'+G.e+'</div><h2>'+G.t+'</h2><p class="mute">'+G.d+'</p></div>'
+  +(c>1?'<p class="mute lvint">เรียงจาก Easy → Medium → Deep Reflection เลือกตามพลังใจของวันนี้ได้เลย</p><div class="chips lvchips" role="group" aria-label="เลือกระดับ">'+chips+'</div>':'')
+  +body+'<div class="row-btn"><button class="btn ghost" id="bk">กลับหน้าแรก</button></div>';
  bindSetButtons();
+ var ch=app.querySelectorAll(".lvchips .chip");
+ for(var z=0;z<ch.length;z++)ch[z].onclick=function(){var t=document.getElementById("lv"+this.getAttribute("data-lv"));if(t)t.scrollIntoView({behavior:"smooth",block:"start"})};
  document.getElementById("bk").onclick=showHome;
  syncCat(g);
  window.scrollTo(0,0);
@@ -3287,6 +3309,30 @@ function feedbackPage(){
 
 function sayH(t,x){return '<div class="blk"><div class="say"><img class="av" src="'+AV+'" alt="มะไหม"><div>'+(t?'<div class="blt">'+t+'</div>':'')+x+'</div></div></div>'}
 function say(t,x){return sayH(t,'<p>'+x+'</p>')}
+/* saving a picture: normal browsers download it; LINE / Facebook / Instagram in-app browsers cannot, so we try the share sheet,
+   then show the picture full-screen to long-press and save. Everything stays on the device. */
+function inApp(){return /Line\/|FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent||"")}
+function blobData(b,cb){try{var r=new FileReader();r.onload=function(){cb(r.result)};r.onerror=function(){cb("")};r.readAsDataURL(b)}catch(e){cb("")}}
+function extBrowserUrl(){var u=location.href.replace(/[?&]openExternalBrowser=1/,"");return u+(u.indexOf("?")<0?"?":"&")+"openExternalBrowser=1"}
+function saveSheet(b,name,noExt){
+ blobData(b,function(d){
+  if(!d){alert("เบราว์เซอร์นี้บันทึกภาพไม่ได้ ลองเปิดลิงก์ใน Chrome หรือ Safari นะคะ");return}
+  var o=document.createElement("div");o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label","บันทึกรูปภาพ");
+  o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(30,20,12,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;overflow:auto";
+  o.innerHTML='<p style="margin:0;color:#fff;text-align:center;font-size:1rem;line-height:1.6;max-width:360px">👆 กดค้างที่รูปด้านล่าง แล้วเลือก<br><b>“บันทึกรูปภาพ”</b> (Save image)</p>'
+   +'<img alt="ภาพที่จะบันทึก" style="max-width:92%;max-height:62vh;border-radius:14px;background:#fff;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto;pointer-events:auto">'
+   +'<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">'+(noExt?'':'<button type="button" id="ssx" style="padding:10px 18px;border-radius:99px;border:0;background:#fff;color:#4a3f36;font:inherit;font-weight:600">เปิดในเบราว์เซอร์เพื่อดาวน์โหลด</button>')+'<button type="button" id="ssc" style="padding:10px 22px;border-radius:99px;border:1.5px solid #fff;background:transparent;color:#fff;font:inherit">ปิด</button></div>';
+  o.querySelector("img").src=d;document.body.appendChild(o);
+  var cl=function(){o.remove()};o.querySelector("#ssc").onclick=cl;
+  var x=o.querySelector("#ssx");if(x)x.onclick=function(){location.href=extBrowserUrl()};
+  try{o.querySelector("#ssc").focus()}catch(e){}})}
+function saveImg(b,name,done,noExt){
+ function dl(){var l=document.createElement("a"),u=URL.createObjectURL(b);l.href=u;l.download=name;document.body.appendChild(l);l.click();setTimeout(function(){l.remove();URL.revokeObjectURL(u)},1500);done&&done("ok")}
+ if(!inApp()){dl();return}
+ var f=null;try{f=new File([b],name,{type:"image/png"})}catch(e){}
+ if(f&&navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
+  navigator.share({files:[f]}).then(function(){done&&done("share")}).catch(function(e){if(e&&e.name==="AbortError"){done&&done("abort");return}saveSheet(b,name,noExt);done&&done("sheet")})}
+ else{saveSheet(b,name,noExt);done&&done("sheet")}}
 function copyTxt(btn,txt){
  try{navigator.clipboard.writeText(txt).then(function(){btn.textContent="คัดลอกแล้ว"},function(){btn.textContent=txt})}catch(e){btn.textContent=txt}
 }
@@ -3416,7 +3462,7 @@ function shareCard(btn,txt,o){
    try{URL.revokeObjectURL(cur.url)}catch(e){}
    cur.blob=b;cur.url=URL.createObjectURL(b);
    try{cur.file=new File([b],"manassamai-result.png",{type:"image/png"})}catch(e){cur.file=null}
-   img.src=cur.url},"image/png")}
+   img.src=cur.url;if(inApp())blobData(b,function(d){if(d)img.src=d})},"image/png")}
  function fonts(){
   var f=document.fonts;
   if(!f||!f.load)return Promise.resolve();
@@ -3431,7 +3477,7 @@ function shareCard(btn,txt,o){
   navigator.share(d).catch(function(){})};
  m.querySelector("#shsave").onclick=function(){
   if(!cur.url)return;
-  var a=document.createElement("a");a.href=cur.url;a.download="manassamai-result.png";document.body.appendChild(a);a.click();a.remove()};
+  if(cur.blob)saveImg(cur.blob,"manassamai-result.png")};
  var cp=m.querySelector("#shcp");
  cp.onclick=function(){copyTxt(cp,cap)};
  fonts().then(build);
@@ -5380,8 +5426,8 @@ function ppModal(){
  document.addEventListener("keydown",key);m.addEventListener("click",function(e){if(e.target===m)close()});
  m.querySelector("#ppx").onclick=close;
  var img=m.querySelector(".shimg");
- function build(){drawPassport(name).toBlob(function(b){if(!b)return;cur.url=URL.createObjectURL(b);try{cur.file=new File([b],"inner-journey-passport.png",{type:"image/png"})}catch(e){cur.file=null}img.src=cur.url},"image/png")}
- m.querySelector("#ppsv").onclick=function(){if(!cur.url)return;var a=document.createElement("a");a.href=cur.url;a.download="inner-journey-passport.png";document.body.appendChild(a);a.click();a.remove()};
+ function build(){drawPassport(name).toBlob(function(b){if(!b)return;cur.blob=b;cur.url=URL.createObjectURL(b);try{cur.file=new File([b],"inner-journey-passport.png",{type:"image/png"})}catch(e){cur.file=null}img.src=cur.url;if(inApp())blobData(b,function(d){if(d)img.src=d})},"image/png")}
+ m.querySelector("#ppsv").onclick=function(){if(cur.blob)saveImg(cur.blob,"inner-journey-passport.png")};
  var go=m.querySelector("#ppgo");
  if(go)go.onclick=function(){if(!cur.file)return;var d={title:"My Inner Journey Passport"};if(navigator.canShare&&navigator.canShare({files:[cur.file]}))d.files=[cur.file];else d.url=shareUrl();navigator.share(d).catch(function(){})};
  var f=document.fonts;
